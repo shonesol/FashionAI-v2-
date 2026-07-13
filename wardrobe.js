@@ -1,10 +1,15 @@
 import {
 
-openDatabase,
-getAllClothes
+loadWardrobe,
+searchWardrobe,
+filterWardrobe,
+toggleFavorite,
+removeClothing,
+getWardrobe
 
 }
-from "./local-database.js";
+
+from "./wardrobe-manager.js";
 
 
 import {
@@ -12,21 +17,14 @@ import {
 generateOutfit
 
 }
+
 from "./outfit-engine.js";
 
 
 
 
 
-await openDatabase();
-
-
-
-
-const clothes =
-await getAllClothes();
-
-
+await loadWardrobe();
 
 
 
@@ -39,10 +37,14 @@ document.getElementById(
 
 
 
-// Display wardrobe
+function displayClothes(items){
 
 
-clothes.forEach(item=>{
+grid.innerHTML="";
+
+
+
+items.forEach(item=>{
 
 
 const card =
@@ -59,8 +61,8 @@ card.className =
 
 card.innerHTML = `
 
-<img 
-src="${item.image}"
+
+<img src="${item.image}"
 style="
 width:100%;
 border-radius:20px;
@@ -71,100 +73,176 @@ border-radius:20px;
 ${item.category}
 </h3>
 
+
 <p>
 ${item.color}
 </p>
+
 
 <p>
 ${item.style}
 </p>
 
+
+<button class="favorite">
+
+${item.favorite ? "❤️":"🤍"}
+
+</button>
+
+
+<button class="delete">
+
+🗑 Delete
+
+</button>
+
+
 `;
+
+
+
+
+
+card.querySelector(".favorite")
+.onclick=()=>{
+
+
+toggleFavorite(item.id);
+
+displayClothes(
+getWardrobe()
+);
+
+
+};
+
+
+
+
+
+card.querySelector(".delete")
+.onclick=async()=>{
+
+
+if(confirm(
+"Delete this clothing item?"
+)){
+
+
+await removeClothing(
+item.id
+);
+
+
+displayClothes(
+getWardrobe()
+);
+
+
+}
+
+
+};
 
 
 
 grid.appendChild(card);
 
 
-
 });
 
 
-
-
-
-
-
-
-// Generate outfit button
-
-
-document
-.getElementById(
-"generateBtn"
-)
-.addEventListener(
-"click",
-()=>{
-
-
-const occasion =
-document.getElementById(
-"occasion"
-).value;
-
-
-
-
-
-const outfit =
-generateOutfit(
-clothes,
-occasion,
-{
-
-style:"Elegant",
-
-colors:[
-"blue",
-"beige",
-"gold"
-]
-
 }
 
+
+
+
+displayClothes(
+getWardrobe()
 );
 
 
 
 
 
+
+
+// Search
+
 document
 .getElementById(
-"outfitResult"
+"searchBox"
 )
-.innerHTML = `
+.addEventListener(
+"input",
+(e)=>{
 
 
-<h3>
-Today's Look ✨
-</h3>
+displayClothes(
 
+searchWardrobe(
+e.target.value
+)
 
-<p>
-${outfit.reason || outfit.message}
-</p>
-
-
-<p>
-Rating:
-${outfit.rating || ""}
- /10
-</p>
-
-
-`;
-
+);
 
 
 });
+
+
+
+
+
+
+
+// Filters
+
+document
+.getElementById(
+"categoryFilter"
+)
+.addEventListener(
+"change",
+applyFilters
+);
+
+
+
+document
+.getElementById(
+"colorFilter"
+)
+.addEventListener(
+"change",
+applyFilters
+);
+
+
+
+
+function applyFilters(){
+
+
+displayClothes(
+
+filterWardrobe({
+
+category:
+document.getElementById(
+"categoryFilter"
+).value,
+
+
+color:
+document.getElementById(
+"colorFilter"
+).value
+
+
+})
+
+);
+
+
+}
