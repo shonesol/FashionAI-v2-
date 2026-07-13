@@ -1,3 +1,6 @@
+// FashionAI Edit Clothing Controller
+
+
 import {
 
 openDatabase,
@@ -10,11 +13,20 @@ from "./local-database.js";
 
 
 
+
+
+// Open local phone database
+
 await openDatabase();
 
 
 
-const id =
+
+
+
+// Get selected clothing ID
+
+const clothingID =
 Number(
 localStorage.getItem(
 "editClothingID"
@@ -24,109 +36,187 @@ localStorage.getItem(
 
 
 
+
+// Get clothes
+
 const clothes =
 await getAllClothes();
 
 
 
+
+
 const item =
 clothes.find(
-clothing=>clothing.id===id
+clothing =>
+clothing.id === clothingID
 );
 
 
 
 
 
+
+
+
+// If item exists, load details
+
 if(item){
 
 
-document.getElementById(
+
+document
+.getElementById(
 "editImage"
-).src =
+)
+.src =
 item.image;
-
-
-document.getElementById(
-"editCategory"
-).value =
-item.category;
-
-
-document.getElementById(
-"editColor"
-).value =
-item.color;
-
-
-document.getElementById(
-"editMaterial"
-).value =
-item.material;
-
-
-document.getElementById(
-"editStyle"
-).value =
-item.style;
-
-
-}
-
-
-
 
 
 
 
 document
 .getElementById(
-"saveEdit"
-)
-.onclick=async()=>{
-
-
-await updateClothing(
-
-id,
-
-{
-
-category:
-document.getElementById(
 "editCategory"
-).value,
+)
+.value =
+item.category || "";
 
 
-color:
-document.getElementById(
+
+document
+.getElementById(
 "editColor"
-).value,
+)
+.value =
+item.color || "";
 
 
-material:
-document.getElementById(
+
+document
+.getElementById(
 "editMaterial"
-).value,
+)
+.value =
+item.material || "";
 
 
-style:
-document.getElementById(
+
+document
+.getElementById(
 "editStyle"
-).value
+)
+.value =
+item.style || "";
 
 
 }
 
+else{
+
+
+alert(
+"Clothing item not found"
 );
+
+
+window.location.href =
+"wardrobe.html";
+
+
+}
+
+
+
+
+
+
+
+
+
+// Save changes
+
+document
+.getElementById(
+"saveEdit"
+)
+.onclick = async ()=>{
+
+
+
+const updatedItem = {
+
+
+category:
+
+document
+.getElementById(
+"editCategory"
+)
+.value,
+
+
+
+color:
+
+document
+.getElementById(
+"editColor"
+)
+.value,
+
+
+
+material:
+
+document
+.getElementById(
+"editMaterial"
+)
+.value,
+
+
+
+style:
+
+document
+.getElementById(
+"editStyle"
+)
+.value
+
+
+
+};
+
+
+
+
+
+
+
+await updateClothing(
+
+clothingID,
+
+updatedItem
+
+);
+
+
+
 
 
 
 alert(
-"✨ Clothing updated!"
+"✨ Clothing updated successfully!"
 );
 
 
+
+
+
+// Return to wardrobe
 
 window.location.href =
 "wardrobe.html";
