@@ -1,48 +1,61 @@
-// FashionAI Rule-Based Outfit Engine
+// FashionAI Smart Hybrid Outfit Engine
 
 
-// Color matching rules
+// ==============================
+// Color Compatibility
+// ==============================
+
 
 const colorMatches = {
 
+white:["blue","black","beige","gold","grey"],
+blue:["white","beige","black","gold"],
+black:["white","red","gold","grey"],
+beige:["white","brown","blue","gold"],
+grey:["black","white","blue"]
 
-white:[
-"blue",
-"black",
-"beige",
-"gold",
-"grey"
+};
+
+
+
+
+// ==============================
+// Occasion Rules
+// ==============================
+
+
+const occasionRules = {
+
+
+office:[
+"shirt",
+"blouse",
+"trousers",
+"blazer"
 ],
 
 
-blue:[
-"white",
-"beige",
-"black",
-"gold"
+casual:[
+"t-shirt",
+"shirt",
+"jeans",
+"sneakers"
 ],
 
 
-black:[
-"white",
-"red",
-"gold",
-"grey"
+party:[
+"dress",
+"skirt",
+"heels",
+"accessories"
 ],
 
 
-beige:[
-"white",
-"brown",
-"blue",
-"gold"
-],
-
-
-grey:[
-"black",
-"white",
-"blue"
+travel:[
+"jeans",
+"shirt",
+"jacket",
+"sneakers"
 ]
 
 
@@ -52,17 +65,85 @@ grey:[
 
 
 
-// Find matching colors
 
-function matchColor(color){
-
-
-color =
-color.toLowerCase();
+// ==============================
+// Find color matches
+// ==============================
 
 
+function getMatchingColors(color){
 
-return colorMatches[color] || [];
+
+return colorMatches[
+color.toLowerCase()
+] || [];
+
+}
+
+
+
+
+
+// ==============================
+// Score clothing item
+// ==============================
+
+
+function scoreItem(
+item,
+preferences,
+occasion
+){
+
+
+let score=0;
+
+
+
+// Favorite style
+
+if(
+preferences &&
+item.style === preferences.style
+){
+
+score += 3;
+
+}
+
+
+
+// Favorite color
+
+if(
+preferences &&
+preferences.colors.includes(
+item.color
+)
+){
+
+score += 2;
+
+}
+
+
+
+// Occasion match
+
+if(
+item.occasion &&
+item.occasion.includes(
+occasion
+)
+){
+
+score += 3;
+
+}
+
+
+
+return score;
 
 }
 
@@ -71,11 +152,20 @@ return colorMatches[color] || [];
 
 
 
-// Generate outfit
+
+// ==============================
+// Generate Outfit
+// ==============================
+
 
 export function generateOutfit(
+
 wardrobe,
-occasion="casual"
+
+occasion="casual",
+
+preferences={}
+
 ){
 
 
@@ -83,9 +173,15 @@ occasion="casual"
 let tops =
 wardrobe.filter(item=>
 
-item.category === "shirt" ||
-item.category === "top" ||
-item.category === "blouse"
+[
+"shirt",
+"top",
+"blouse",
+"t-shirt"
+]
+.includes(
+item.category
+)
 
 );
 
@@ -94,9 +190,15 @@ item.category === "blouse"
 let bottoms =
 wardrobe.filter(item=>
 
-item.category === "pants" ||
-item.category === "trousers" ||
-item.category === "skirt"
+[
+"pants",
+"trousers",
+"jeans",
+"skirt"
+]
+.includes(
+item.category
+)
 
 );
 
@@ -105,10 +207,9 @@ item.category === "skirt"
 let shoes =
 wardrobe.filter(item=>
 
-item.category === "shoes"
+item.category==="shoes"
 
 );
-
 
 
 
@@ -119,12 +220,14 @@ tops.length===0 ||
 bottoms.length===0
 ){
 
+
 return {
 
 message:
-"Add more clothing items to create outfits."
+"Your wardrobe needs more items."
 
 };
+
 
 }
 
@@ -134,21 +237,50 @@ message:
 
 
 
-let selectedTop =
-tops[0];
+// Rank tops
 
+tops.sort(
+(a,b)=>
 
-let possibleColors =
-matchColor(
-selectedTop.color
+scoreItem(
+b,
+preferences,
+occasion
+)
+-
+scoreItem(
+a,
+preferences,
+occasion
+)
+
 );
 
 
 
-let selectedBottom =
+
+
+let chosenTop =
+tops[0];
+
+
+
+
+
+let matchingColors =
+getMatchingColors(
+chosenTop.color
+);
+
+
+
+
+
+let chosenBottom =
+
 bottoms.find(item=>
 
-possibleColors.includes(
+matchingColors.includes(
 item.color.toLowerCase()
 )
 
@@ -161,24 +293,54 @@ bottoms[0];
 
 
 
+
+
+
+let rating = Math.min(
+
+10,
+
+scoreItem(
+chosenTop,
+preferences,
+occasion
+)
++
+scoreItem(
+chosenBottom,
+preferences,
+occasion
+)
+
+);
+
+
+
+
+
+
+
 return {
 
 
-top:selectedTop,
+top:chosenTop,
 
 
-bottom:selectedBottom,
+bottom:chosenBottom,
 
 
-shoes:
-shoes[0] || null,
+shoes:shoes[0] || null,
 
 
 occasion:occasion,
 
 
-message:
-"✨ FashionAI created an outfit using your wardrobe."
+rating:rating,
+
+
+reason:
+
+`I selected this outfit because your ${chosenTop.color} ${chosenTop.category} matches well with your ${chosenBottom.color} ${chosenBottom.category}.`
 
 
 };
