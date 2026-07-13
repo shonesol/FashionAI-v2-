@@ -8,7 +8,13 @@ openDatabase,
 getOutfitHistory
 
 }
+import {
 
+toggleFavoriteOutfit
+
+}
+
+from "./local-database.js";
 from "./local-database.js";
 
 
