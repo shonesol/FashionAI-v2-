@@ -27,6 +27,16 @@ from "./outfit-engine.js";
 
 
 
+import {
+
+saveOutfit
+
+}
+
+from "./local-database.js";
+
+
+
 
 
 // Load wardrobe
@@ -46,21 +56,19 @@ document.getElementById(
 
 
 
+// ==========================
+// Display Clothes
+// ==========================
 
-
-// Display clothes
 
 function displayClothes(items){
 
 
-
-grid.innerHTML="";
-
+grid.innerHTML = "";
 
 
 
-
-if(items.length===0){
+if(items.length === 0){
 
 
 grid.innerHTML = `
@@ -89,14 +97,11 @@ return;
 
 
 
-
 items.forEach(item=>{
 
 
 const card =
-document.createElement(
-"div"
-);
+document.createElement("div");
 
 
 
@@ -108,7 +113,6 @@ card.className =
 
 
 card.innerHTML = `
-
 
 <img
 
@@ -122,7 +126,6 @@ border-radius:20px;
 "
 
 >
-
 
 
 <h3>
@@ -171,15 +174,11 @@ ${item.favorite ? "❤️" : "🤍"}
 
 
 
-
-// ==========================
 // Favorite
-// ==========================
-
 
 card
 .querySelector(".favoriteBtn")
-.onclick = async ()=>{
+.onclick = async()=>{
 
 
 await toggleFavorite(
@@ -205,11 +204,7 @@ updateStats();
 
 
 
-
-// ==========================
-// Edit Clothing
-// ==========================
-
+// Edit
 
 card
 .querySelector(".editBtn")
@@ -217,11 +212,8 @@ card
 
 
 localStorage.setItem(
-
 "editClothingID",
-
 item.id
-
 );
 
 
@@ -238,29 +230,21 @@ window.location.href =
 
 
 
-
-
-// ==========================
-// Delete Clothing
-// ==========================
-
+// Delete
 
 card
 .querySelector(".deleteBtn")
-.onclick = async ()=>{
+.onclick = async()=>{
 
 
 const confirmDelete =
 confirm(
-
 "Delete this clothing item permanently?"
-
 );
 
 
 
 if(confirmDelete){
-
 
 
 await removeClothing(
@@ -281,9 +265,7 @@ updateStats();
 }
 
 
-
 };
-
 
 
 
@@ -293,9 +275,7 @@ updateStats();
 grid.appendChild(card);
 
 
-
 });
-
 
 
 }
@@ -310,7 +290,6 @@ grid.appendChild(card);
 
 // Initial display
 
-
 displayClothes(
 getWardrobe()
 );
@@ -324,14 +303,12 @@ getWardrobe()
 
 
 // ==========================
-// SEARCH
+// Search
 // ==========================
 
 
 document
-.getElementById(
-"searchBox"
-)
+.getElementById("searchBox")
 .addEventListener(
 "input",
 (event)=>{
@@ -349,7 +326,6 @@ results
 );
 
 
-
 });
 
 
@@ -361,7 +337,7 @@ results
 
 
 // ==========================
-// FILTERS
+// Filters
 // ==========================
 
 
@@ -370,18 +346,14 @@ function applyFilters(){
 
 const category =
 document
-.getElementById(
-"categoryFilter"
-)
+.getElementById("categoryFilter")
 .value;
 
 
 
 const color =
 document
-.getElementById(
-"colorFilter"
-)
+.getElementById("colorFilter")
 .value;
 
 
@@ -391,9 +363,9 @@ document
 const results =
 filterWardrobe({
 
-category:category,
+category,
 
-color:color
+color
 
 });
 
@@ -413,11 +385,8 @@ results
 
 
 
-
 document
-.getElementById(
-"categoryFilter"
-)
+.getElementById("categoryFilter")
 .addEventListener(
 "change",
 applyFilters
@@ -426,15 +395,11 @@ applyFilters
 
 
 document
-.getElementById(
-"colorFilter"
-)
+.getElementById("colorFilter")
 .addEventListener(
 "change",
 applyFilters
 );
-
-
 
 
 
@@ -452,7 +417,6 @@ applyFilters
 function updateStats(){
 
 
-
 const stats =
 getWardrobeStats();
 
@@ -460,9 +424,7 @@ getWardrobeStats();
 
 
 document
-.getElementById(
-"stats"
-)
+.getElementById("stats")
 .innerHTML = `
 
 
@@ -509,24 +471,21 @@ updateStats();
 
 
 // ==========================
-// Outfit Generator
+// Outfit Generator + History
 // ==========================
 
 
 document
-.getElementById(
-"generateBtn"
-)
-.onclick = ()=>{
+.getElementById("generateBtn")
+.onclick = async()=>{
 
 
 
 const occasion =
 document
-.getElementById(
-"occasion"
-)
+.getElementById("occasion")
 .value;
+
 
 
 
@@ -563,21 +522,105 @@ colors:[
 
 
 
+if(outfit.message){
+
+
 document
-.getElementById(
-"outfitResult"
-)
+.getElementById("outfitResult")
 .innerHTML = `
 
 
 <h3>
-✨ FashionAI Look
+✨ FashionAI
 </h3>
 
 
 <p>
-${outfit.reason || outfit.message}
+${outfit.message}
 </p>
+
+
+`;
+
+return;
+
+
+}
+
+
+
+
+
+
+
+
+// Save generated outfit
+
+
+await saveOutfit({
+
+top: outfit.top,
+
+bottom: outfit.bottom,
+
+shoes: outfit.shoes,
+
+occasion: outfit.occasion,
+
+rating: outfit.rating,
+
+reason: outfit.reason
+
+});
+
+
+
+
+
+
+
+
+// Show outfit
+
+
+document
+.getElementById("outfitResult")
+.innerHTML = `
+
+
+<h3>
+✨ Today's FashionAI Look
+</h3>
+
+
+
+<p>
+👕 Top:
+${outfit.top?.color || ""}
+${outfit.top?.category || ""}
+</p>
+
+
+
+<p>
+👖 Bottom:
+${outfit.bottom?.color || ""}
+${outfit.bottom?.category || ""}
+</p>
+
+
+
+<p>
+👟 Shoes:
+${outfit.shoes?.color || "Optional"}
+</p>
+
+
+
+<p>
+💡 ${outfit.reason || ""}
+</p>
+
 
 
 <p>
@@ -590,343 +633,4 @@ ${outfit.rating || "N/A"}/10
 
 
 
-};")
-.onclick=async()=>{
-
-
-
-const confirmDelete =
-confirm(
-
-"Delete this clothing item permanently?"
-
-);
-
-
-
-if(confirmDelete){
-
-
-
-await removeClothing(
-item.id
-);
-
-
-
-displayClothes(
-getWardrobe()
-);
-
-
-
-updateStats();
-
-
-
-}
-
-
-
 };
-
-
-
-
-
-
-
-grid.appendChild(card);
-
-
-
-});
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// Initial display
-
-
-displayClothes(
-getWardrobe()
-);
-
-
-
-
-
-
-
-
-
-// SEARCH
-
-
-document
-.getElementById(
-"searchBox"
-)
-.addEventListener(
-"input",
-(event)=>{
-
-
-const results =
-searchWardrobe(
-event.target.value
-);
-
-
-
-displayClothes(
-results
-);
-
-
-
-});
-
-
-
-
-
-
-
-
-
-// FILTERS
-
-
-function applyFilters(){
-
-
-const category =
-document
-.getElementById(
-"categoryFilter"
-)
-.value;
-
-
-
-const color =
-document
-.getElementById(
-"colorFilter"
-)
-.value;
-
-
-
-
-
-const results =
-filterWardrobe({
-
-category:category,
-
-color:color
-
-});
-
-
-
-
-
-displayClothes(
-results
-);
-
-
-
-}
-
-
-
-
-
-
-document
-.getElementById(
-"categoryFilter"
-)
-.addEventListener(
-"change",
-applyFilters
-);
-
-
-
-document
-.getElementById(
-"colorFilter"
-)
-.addEventListener(
-"change",
-applyFilters
-);
-
-
-
-
-
-
-
-
-
-
-// Statistics
-
-
-function updateStats(){
-
-
-
-const stats =
-getWardrobeStats();
-
-
-
-
-document
-.getElementById(
-"stats"
-)
-.innerHTML = `
-
-
-<p>
-👗 Total Items:
-${stats.total}
-</p>
-
-
-<p>
-❤️ Favorites:
-${stats.favorites}
-</p>
-
-
-<p>
-🎨 Colors:
-${Object.keys(stats.colors).join(", ") || "None"}
-</p>
-
-
-<p>
-👚 Categories:
-${Object.keys(stats.categories).join(", ") || "None"}
-</p>
-
-
-`;
-
-
-
-}
-
-
-
-updateStats();
-
-
-
-
-
-
-
-
-
-// Outfit Generator
-
-
-document
-.getElementById(
-"generateBtn"
-)
-.onclick=()=>{
-
-
-
-const occasion =
-document
-.getElementById(
-"occasion"
-)
-.value;
-
-
-
-
-
-const outfit =
-generateOutfit(
-
-getWardrobe(),
-
-occasion,
-
-{
-
-style:"Elegant",
-
-colors:[
-"blue",
-"beige",
-"gold"
-]
-
-
-}
-
-);
-
-
-
-
-
-
-
-document
-.getElementById(
-"outfitResult"
-)
-.innerHTML = `
-
-
-<h3>
-✨ FashionAI Look
-</h3>
-
-
-<p>
-
-${outfit.reason || outfit.message}
-
-</p>
-
-
-<p>
-
-Rating:
-${outfit.rating || "N/A"}/10
-
-</p>
-
-
-`;
-
-
-
-};
-}
