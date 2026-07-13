@@ -248,3 +248,87 @@ resolve(true);
 
 
 }
+// Update clothing item
+
+export function updateClothing(id, updatedData){
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+db.transaction(
+STORE_NAME,
+"readwrite"
+);
+
+
+const store =
+transaction.objectStore(
+STORE_NAME
+);
+
+
+
+const request =
+store.get(id);
+
+
+
+request.onsuccess=()=>{
+
+
+const item =
+request.result;
+
+
+
+if(item){
+
+
+const updated = {
+
+...item,
+
+...updatedData
+
+};
+
+
+
+store.put(updated);
+
+
+resolve(updated);
+
+
+}
+
+else{
+
+reject(
+"Item not found"
+);
+
+}
+
+
+};
+
+
+
+request.onerror=()=>{
+
+
+reject(
+"Update failed"
+);
+
+
+};
+
+
+
+});
+
+
+}
