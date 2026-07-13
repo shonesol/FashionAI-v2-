@@ -1,15 +1,21 @@
+// FashionAI Wardrobe Controller
+
+
 import {
 
 loadWardrobe,
+getWardrobe,
 searchWardrobe,
 filterWardrobe,
 toggleFavorite,
+editClothing,
 removeClothing,
-getWardrobe
+getWardrobeStats
 
 }
 
 from "./wardrobe-manager.js";
+
 
 
 import {
@@ -24,7 +30,12 @@ from "./outfit-engine.js";
 
 
 
+// Load wardrobe
+
 await loadWardrobe();
+
+
+
 
 
 
@@ -37,10 +48,47 @@ document.getElementById(
 
 
 
+
+
+// Display clothes
+
 function displayClothes(items){
 
 
+
 grid.innerHTML="";
+
+
+
+
+
+if(items.length===0){
+
+
+grid.innerHTML = `
+
+<div class="card">
+
+<h3>
+Your wardrobe is empty 👗
+</h3>
+
+<p>
+Upload clothes to start building your smart closet.
+</p>
+
+</div>
+
+`;
+
+
+return;
+
+}
+
+
+
+
 
 
 
@@ -59,39 +107,59 @@ card.className =
 
 
 
+
+
 card.innerHTML = `
 
 
-<img src="${item.image}"
+<img
+
+src="${item.image}"
+
 style="
 width:100%;
+height:150px;
+object-fit:cover;
 border-radius:20px;
-">
+"
+
+>
+
 
 
 <h3>
-${item.category}
+${item.category || "Clothing"}
 </h3>
 
 
 <p>
-${item.color}
+🎨 ${item.color || ""}
 </p>
 
 
 <p>
-${item.style}
+✨ ${item.style || ""}
 </p>
 
 
-<button class="favorite">
+
+<button class="favoriteBtn">
 
 ${item.favorite ? "❤️":"🤍"}
 
 </button>
 
 
-<button class="delete">
+
+<button class="editBtn">
+
+✏️ Edit
+
+</button>
+
+
+
+<button class="deleteBtn">
 
 🗑 Delete
 
@@ -104,15 +172,26 @@ ${item.favorite ? "❤️":"🤍"}
 
 
 
-card.querySelector(".favorite")
-.onclick=()=>{
 
 
-toggleFavorite(item.id);
+// Favorite
+
+
+card
+.querySelector(".favoriteBtn")
+.onclick=async()=>{
+
+
+await toggleFavorite(
+item.id
+);
+
+
 
 displayClothes(
 getWardrobe()
 );
+
 
 
 };
@@ -121,13 +200,88 @@ getWardrobe()
 
 
 
-card.querySelector(".delete")
+
+
+// Edit
+
+
+card
+.querySelector(".editBtn")
 .onclick=async()=>{
 
 
-if(confirm(
-"Delete this clothing item?"
-)){
+
+const newColor =
+prompt(
+"Change color:",
+item.color
+);
+
+
+
+const newStyle =
+prompt(
+"Change style:",
+item.style
+);
+
+
+
+
+
+await editClothing(
+
+item.id,
+
+{
+
+color:newColor,
+
+style:newStyle
+
+}
+
+);
+
+
+
+
+displayClothes(
+getWardrobe()
+);
+
+
+
+};
+
+
+
+
+
+
+
+
+
+// Delete
+
+
+card
+.querySelector(".deleteBtn")
+.onclick=async()=>{
+
+
+
+const confirmDelete =
+confirm(
+
+"Delete this clothing item permanently?"
+
+);
+
+
+
+if(confirmDelete){
+
 
 
 await removeClothing(
@@ -135,27 +289,48 @@ item.id
 );
 
 
+
 displayClothes(
 getWardrobe()
 );
 
 
+
+updateStats();
+
+
+
 }
+
 
 
 };
 
 
 
+
+
+
+
 grid.appendChild(card);
+
 
 
 });
 
 
+
 }
 
 
+
+
+
+
+
+
+
+// Initial display
 
 
 displayClothes(
@@ -168,7 +343,10 @@ getWardrobe()
 
 
 
-// Search
+
+
+// SEARCH
+
 
 document
 .getElementById(
@@ -176,16 +354,20 @@ document
 )
 .addEventListener(
 "input",
-(e)=>{
+(event)=>{
+
+
+const results =
+searchWardrobe(
+event.target.value
+);
+
 
 
 displayClothes(
-
-searchWardrobe(
-e.target.value
-)
-
+results
 );
+
 
 
 });
@@ -196,53 +378,231 @@ e.target.value
 
 
 
-// Filters
-
-document
-.getElementById(
-"categoryFilter"
-)
-.addEventListener(
-"change",
-applyFilters
-);
 
 
-
-document
-.getElementById(
-"colorFilter"
-)
-.addEventListener(
-"change",
-applyFilters
-);
-
-
+// FILTERS
 
 
 function applyFilters(){
 
 
-displayClothes(
+const category =
+document
+.getElementById(
+"categoryFilter"
+)
+.value;
 
+
+
+const color =
+document
+.getElementById(
+"colorFilter"
+)
+.value;
+
+
+
+
+
+const results =
 filterWardrobe({
 
-category:
-document.getElementById(
+category:category,
+
+color:color
+
+});
+
+
+
+
+
+displayClothes(
+results
+);
+
+
+
+}
+
+
+
+
+
+
+document
+.getElementById(
 "categoryFilter"
-).value,
+)
+.addEventListener(
+"change",
+applyFilters
+);
 
 
-color:
-document.getElementById(
+
+document
+.getElementById(
 "colorFilter"
-).value
+)
+.addEventListener(
+"change",
+applyFilters
+);
 
 
-})
+
+
+
+
+
+
+
+
+// Statistics
+
+
+function updateStats(){
+
+
+
+const stats =
+getWardrobeStats();
+
+
+
+
+document
+.getElementById(
+"stats"
+)
+.innerHTML = `
+
+
+<p>
+👗 Total Items:
+${stats.total}
+</p>
+
+
+<p>
+❤️ Favorites:
+${stats.favorites}
+</p>
+
+
+<p>
+🎨 Colors:
+${Object.keys(stats.colors).join(", ") || "None"}
+</p>
+
+
+<p>
+👚 Categories:
+${Object.keys(stats.categories).join(", ") || "None"}
+</p>
+
+
+`;
+
+
+
+}
+
+
+
+updateStats();
+
+
+
+
+
+
+
+
+
+// Outfit Generator
+
+
+document
+.getElementById(
+"generateBtn"
+)
+.onclick=()=>{
+
+
+
+const occasion =
+document
+.getElementById(
+"occasion"
+)
+.value;
+
+
+
+
+
+const outfit =
+generateOutfit(
+
+getWardrobe(),
+
+occasion,
+
+{
+
+style:"Elegant",
+
+colors:[
+"blue",
+"beige",
+"gold"
+]
+
+
+}
 
 );
 
 
+
+
+
+
+
+document
+.getElementById(
+"outfitResult"
+)
+.innerHTML = `
+
+
+<h3>
+✨ FashionAI Look
+</h3>
+
+
+<p>
+
+${outfit.reason || outfit.message}
+
+</p>
+
+
+<p>
+
+Rating:
+${outfit.rating || "N/A"}/10
+
+</p>
+
+
+`;
+
+
+
+};
 }
