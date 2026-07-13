@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Upload Clothes | FashionAI</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header class="top-header">
+
+<div class="logo">
+✨ FashionAI
+</div>
+
+</header>
+
+
+
+
+<section class="welcome">
+
+<h1>
+Upload Clothing 👗
+</h1>
+
+<p>
+Add your clothes to your private AI wardrobe.
+</p>
+
+</section>
+
+
+
+
+<section class="card assistant">
+
+
+<h3>
+📸 Choose Clothing Photo
+</h3>
+
+
+<input 
+type="file"
+id="clothingImage"
+accept="image/*"
+>
+
+
+
+<img 
+id="preview"
+style="
+width:200px;
+border-radius:20px;
+margin-top:20px;
+display:none;
+"
+>
+
+
+
+<button id="analyzeBtn">
+
+🤖 Analyze Clothing
+
+</button>
+
+
+
+</section>
+
+
+
+
+
+
+
+<section class="card">
+
+
+<h3>
+✨ Clothing Details
+</h3>
+
+
+<input 
+id="category"
+placeholder="Category"
+>
+
+
+<input 
+id="color"
+placeholder="Color"
+>
+
+
+<input 
+id="material"
+placeholder="Material"
+>
+
+
+<input 
+id="style"
+placeholder="Style"
+>
+
+
+
+<button id="saveBtn">
+
+💾 Save To My Wardrobe
+
+</button>
+
+
+</section>
+
+
+
+
+
+<script type="module" src="upload.js"></script>
+
+
+</body>
+
+</html>
