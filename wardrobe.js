@@ -8,7 +8,6 @@ getWardrobe,
 searchWardrobe,
 filterWardrobe,
 toggleFavorite,
-editClothing,
 removeClothing,
 getWardrobeStats
 
@@ -33,7 +32,6 @@ from "./outfit-engine.js";
 // Load wardrobe
 
 await loadWardrobe();
-
 
 
 
@@ -133,19 +131,19 @@ ${item.category || "Clothing"}
 
 
 <p>
-🎨 ${item.color || ""}
+🎨 ${item.color || "Unknown"}
 </p>
 
 
 <p>
-✨ ${item.style || ""}
+✨ ${item.style || "Unknown"}
 </p>
 
 
 
 <button class="favoriteBtn">
 
-${item.favorite ? "❤️":"🤍"}
+${item.favorite ? "❤️" : "🤍"}
 
 </button>
 
@@ -174,12 +172,14 @@ ${item.favorite ? "❤️":"🤍"}
 
 
 
+// ==========================
 // Favorite
+// ==========================
 
 
 card
 .querySelector(".favoriteBtn")
-.onclick=async()=>{
+.onclick = async ()=>{
 
 
 await toggleFavorite(
@@ -194,6 +194,9 @@ getWardrobe()
 
 
 
+updateStats();
+
+
 };
 
 
@@ -202,47 +205,67 @@ getWardrobe()
 
 
 
-// Edit
+
+// ==========================
+// Edit Clothing
+// ==========================
 
 
 card
 .querySelector(".editBtn")
-.onclick=async()=>{
+.onclick = ()=>{
+
+
+localStorage.setItem(
+
+"editClothingID",
+
+item.id
+
+);
 
 
 
-const newColor =
-prompt(
-"Change color:",
-item.color
+window.location.href =
+"edit-clothing.html";
+
+
+};
+
+
+
+
+
+
+
+
+
+// ==========================
+// Delete Clothing
+// ==========================
+
+
+card
+.querySelector(".deleteBtn")
+.onclick = async ()=>{
+
+
+const confirmDelete =
+confirm(
+
+"Delete this clothing item permanently?"
+
 );
 
 
 
-const newStyle =
-prompt(
-"Change style:",
-item.style
+if(confirmDelete){
+
+
+
+await removeClothing(
+item.id
 );
-
-
-
-
-
-await editClothing(
-
-item.id,
-
-{
-
-color:newColor,
-
-style:newStyle
-
-}
-
-);
-
 
 
 
@@ -252,6 +275,13 @@ getWardrobe()
 
 
 
+updateStats();
+
+
+}
+
+
+
 };
 
 
@@ -260,13 +290,307 @@ getWardrobe()
 
 
 
+grid.appendChild(card);
 
 
-// Delete
+
+});
 
 
-card
-.querySelector(".deleteBtn")
+
+}
+
+
+
+
+
+
+
+
+
+// Initial display
+
+
+displayClothes(
+getWardrobe()
+);
+
+
+
+
+
+
+
+
+
+// ==========================
+// SEARCH
+// ==========================
+
+
+document
+.getElementById(
+"searchBox"
+)
+.addEventListener(
+"input",
+(event)=>{
+
+
+const results =
+searchWardrobe(
+event.target.value
+);
+
+
+
+displayClothes(
+results
+);
+
+
+
+});
+
+
+
+
+
+
+
+
+
+// ==========================
+// FILTERS
+// ==========================
+
+
+function applyFilters(){
+
+
+const category =
+document
+.getElementById(
+"categoryFilter"
+)
+.value;
+
+
+
+const color =
+document
+.getElementById(
+"colorFilter"
+)
+.value;
+
+
+
+
+
+const results =
+filterWardrobe({
+
+category:category,
+
+color:color
+
+});
+
+
+
+
+
+displayClothes(
+results
+);
+
+
+
+}
+
+
+
+
+
+
+document
+.getElementById(
+"categoryFilter"
+)
+.addEventListener(
+"change",
+applyFilters
+);
+
+
+
+document
+.getElementById(
+"colorFilter"
+)
+.addEventListener(
+"change",
+applyFilters
+);
+
+
+
+
+
+
+
+
+
+
+
+// ==========================
+// Statistics
+// ==========================
+
+
+function updateStats(){
+
+
+
+const stats =
+getWardrobeStats();
+
+
+
+
+document
+.getElementById(
+"stats"
+)
+.innerHTML = `
+
+
+<p>
+👗 Total Items:
+${stats.total}
+</p>
+
+
+<p>
+❤️ Favorites:
+${stats.favorites}
+</p>
+
+
+<p>
+🎨 Colors:
+${Object.keys(stats.colors).join(", ") || "None"}
+</p>
+
+
+<p>
+👚 Categories:
+${Object.keys(stats.categories).join(", ") || "None"}
+</p>
+
+
+`;
+
+
+
+}
+
+
+
+updateStats();
+
+
+
+
+
+
+
+
+
+// ==========================
+// Outfit Generator
+// ==========================
+
+
+document
+.getElementById(
+"generateBtn"
+)
+.onclick = ()=>{
+
+
+
+const occasion =
+document
+.getElementById(
+"occasion"
+)
+.value;
+
+
+
+
+
+const outfit =
+generateOutfit(
+
+getWardrobe(),
+
+occasion,
+
+{
+
+style:"Elegant",
+
+colors:[
+
+"blue",
+
+"beige",
+
+"gold"
+
+]
+
+}
+
+);
+
+
+
+
+
+
+
+document
+.getElementById(
+"outfitResult"
+)
+.innerHTML = `
+
+
+<h3>
+✨ FashionAI Look
+</h3>
+
+
+<p>
+${outfit.reason || outfit.message}
+</p>
+
+
+<p>
+⭐ Rating:
+${outfit.rating || "N/A"}/10
+</p>
+
+
+`;
+
+
+
+};")
 .onclick=async()=>{
 
 
