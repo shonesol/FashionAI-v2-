@@ -1,12 +1,15 @@
 // FashionAI Local Database
-// Stores wardrobe privately on user's device
+// Stores wardrobe and outfit history privately on the user's phone
 
 
 const DATABASE_NAME = "FashionAI_DB";
 
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 
-const STORE_NAME = "wardrobe";
+
+const WARDROBE_STORE = "wardrobe";
+
+const OUTFIT_STORE = "outfitHistory";
 
 
 let db;
@@ -14,7 +17,11 @@ let db;
 
 
 
+
+// ===============================
 // Open Database
+// ===============================
+
 
 export function openDatabase(){
 
@@ -30,6 +37,8 @@ DATABASE_VERSION
 
 
 
+
+
 request.onupgradeneeded = (event)=>{
 
 
@@ -38,21 +47,33 @@ event.target.result;
 
 
 
-if(!db.objectStoreNames.contains(STORE_NAME)){
 
 
-const store =
+// Wardrobe Store
+
+if(
+!db.objectStoreNames.contains(
+WARDROBE_STORE
+)
+){
+
+
+const wardrobeStore =
 db.createObjectStore(
-STORE_NAME,
+WARDROBE_STORE,
 {
+
 keyPath:"id",
+
 autoIncrement:true
+
 }
+
 );
 
 
 
-store.createIndex(
+wardrobeStore.createIndex(
 "category",
 "category",
 {
@@ -61,7 +82,8 @@ unique:false
 );
 
 
-store.createIndex(
+
+wardrobeStore.createIndex(
 "color",
 "color",
 {
@@ -70,7 +92,8 @@ unique:false
 );
 
 
-store.createIndex(
+
+wardrobeStore.createIndex(
 "favorite",
 "favorite",
 {
@@ -79,10 +102,57 @@ unique:false
 );
 
 
+
 }
+
+
+
+
+
+
+
+// Outfit History Store
+
+
+if(
+!db.objectStoreNames.contains(
+OUTFIT_STORE
+)
+){
+
+
+const outfitStore =
+db.createObjectStore(
+OUTFIT_STORE,
+{
+
+keyPath:"id",
+
+autoIncrement:true
+
+}
+
+);
+
+
+
+outfitStore.createIndex(
+"date",
+"date",
+{
+unique:false
+}
+);
+
+
+
+}
+
 
 
 };
+
+
 
 
 
@@ -102,6 +172,9 @@ resolve(db);
 
 
 
+
+
+
 request.onerror=(error)=>{
 
 
@@ -109,6 +182,7 @@ reject(error);
 
 
 };
+
 
 
 });
@@ -122,7 +196,11 @@ reject(error);
 
 
 
-// Save clothing
+
+
+// ===============================
+// Save Clothing
+// ===============================
 
 
 export function saveClothing(item){
@@ -133,14 +211,15 @@ return new Promise((resolve,reject)=>{
 
 const transaction =
 db.transaction(
-STORE_NAME,
+WARDROBE_STORE,
 "readwrite"
 );
 
 
+
 const store =
 transaction.objectStore(
-STORE_NAME
+WARDROBE_STORE
 );
 
 
@@ -181,7 +260,11 @@ reject(false);
 
 
 
-// Get all clothes
+
+
+// ===============================
+// Get All Clothes
+// ===============================
 
 
 export function getAllClothes(){
@@ -192,14 +275,15 @@ return new Promise((resolve,reject)=>{
 
 const transaction =
 db.transaction(
-STORE_NAME,
+WARDROBE_STORE,
 "readonly"
 );
 
 
+
 const store =
 transaction.objectStore(
-STORE_NAME
+WARDROBE_STORE
 );
 
 
@@ -243,7 +327,10 @@ reject(false);
 
 
 
-// Update clothing
+
+// ===============================
+// Update Clothing
+// ===============================
 
 
 export function updateClothing(
@@ -257,14 +344,15 @@ return new Promise((resolve,reject)=>{
 
 const transaction =
 db.transaction(
-STORE_NAME,
+WARDROBE_STORE,
 "readwrite"
 );
 
 
+
 const store =
 transaction.objectStore(
-STORE_NAME
+WARDROBE_STORE
 );
 
 
@@ -277,25 +365,29 @@ store.get(id);
 request.onsuccess=()=>{
 
 
-const oldItem =
+const item =
 request.result;
 
 
 
-if(oldItem){
+if(item){
 
 
-const updated={
+const updated = {
 
-...oldItem,
+
+...item,
+
 
 ...changes
+
 
 };
 
 
 
 store.put(updated);
+
 
 
 resolve(updated);
@@ -314,7 +406,10 @@ reject(
 }
 
 
+
 };
+
+
 
 
 
@@ -341,7 +436,11 @@ reject(
 
 
 
-// Delete clothing
+
+
+// ===============================
+// Delete Clothing
+// ===============================
 
 
 export function deleteClothing(id){
@@ -352,14 +451,15 @@ return new Promise((resolve)=>{
 
 const transaction =
 db.transaction(
-STORE_NAME,
+WARDROBE_STORE,
 "readwrite"
 );
 
 
+
 const store =
 transaction.objectStore(
-STORE_NAME
+WARDROBE_STORE
 );
 
 
@@ -369,6 +469,251 @@ store.delete(id);
 
 
 resolve(true);
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+// ===============================
+// Save Outfit History
+// ===============================
+
+
+export function saveOutfit(outfit){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+db.transaction(
+OUTFIT_STORE,
+"readwrite"
+);
+
+
+
+const store =
+transaction.objectStore(
+OUTFIT_STORE
+);
+
+
+
+
+const data = {
+
+
+...outfit,
+
+
+date:
+new Date()
+.toISOString(),
+
+
+favorite:false
+
+
+};
+
+
+
+
+
+const request =
+store.add(data);
+
+
+
+
+request.onsuccess=()=>{
+
+
+resolve(true);
+
+
+};
+
+
+
+
+request.onerror=()=>{
+
+
+reject(false);
+
+
+};
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+// ===============================
+// Get Outfit History
+// ===============================
+
+
+export function getOutfitHistory(){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+db.transaction(
+OUTFIT_STORE,
+"readonly"
+);
+
+
+
+const store =
+transaction.objectStore(
+OUTFIT_STORE
+);
+
+
+
+const request =
+store.getAll();
+
+
+
+
+request.onsuccess=()=>{
+
+
+resolve(
+request.result
+);
+
+
+};
+
+
+
+
+request.onerror=()=>{
+
+
+reject(false);
+
+
+};
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+// ===============================
+// Rate Outfit
+// ===============================
+
+
+export function rateOutfit(
+id,
+rating
+){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+db.transaction(
+OUTFIT_STORE,
+"readwrite"
+);
+
+
+
+const store =
+transaction.objectStore(
+OUTFIT_STORE
+);
+
+
+
+const request =
+store.get(id);
+
+
+
+
+request.onsuccess=()=>{
+
+
+const outfit =
+request.result;
+
+
+
+if(outfit){
+
+
+outfit.rating =
+rating;
+
+
+
+store.put(outfit);
+
+
+
+resolve(outfit);
+
+
+}
+
+else{
+
+
+reject(
+"Outfit not found"
+);
+
+
+}
+
+
+
+};
+
 
 
 });
