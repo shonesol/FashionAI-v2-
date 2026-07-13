@@ -1,5 +1,5 @@
 // FashionAI Local Database
-// Stores wardrobe on user's device
+// Stores wardrobe privately on user's device
 
 
 const DATABASE_NAME = "FashionAI_DB";
@@ -9,12 +9,12 @@ const DATABASE_VERSION = 1;
 const STORE_NAME = "wardrobe";
 
 
-
 let db;
 
 
 
-// Open database
+
+// Open Database
 
 export function openDatabase(){
 
@@ -33,7 +33,8 @@ DATABASE_VERSION
 request.onupgradeneeded = (event)=>{
 
 
-db = event.target.result;
+db =
+event.target.result;
 
 
 
@@ -50,6 +51,7 @@ autoIncrement:true
 );
 
 
+
 store.createIndex(
 "category",
 "category",
@@ -62,6 +64,15 @@ unique:false
 store.createIndex(
 "color",
 "color",
+{
+unique:false
+}
+);
+
+
+store.createIndex(
+"favorite",
+"favorite",
 {
 unique:false
 }
@@ -72,6 +83,8 @@ unique:false
 
 
 };
+
+
 
 
 
@@ -108,7 +121,9 @@ reject(error);
 
 
 
-// Save clothing item
+
+// Save clothing
+
 
 export function saveClothing(item){
 
@@ -154,6 +169,7 @@ reject(false);
 };
 
 
+
 });
 
 
@@ -164,12 +180,14 @@ reject(false);
 
 
 
+
 // Get all clothes
+
 
 export function getAllClothes(){
 
 
-return new Promise((resolve)=>{
+return new Promise((resolve,reject)=>{
 
 
 const transaction =
@@ -177,7 +195,6 @@ db.transaction(
 STORE_NAME,
 "readonly"
 );
-
 
 
 const store =
@@ -204,6 +221,16 @@ request.result
 
 
 
+request.onerror=()=>{
+
+
+reject(false);
+
+
+};
+
+
+
 });
 
 
@@ -214,43 +241,16 @@ request.result
 
 
 
-// Delete clothing
-
-export function deleteClothing(id){
 
 
-return new Promise((resolve)=>{
+// Update clothing
 
 
-const transaction =
-db.transaction(
-STORE_NAME,
-"readwrite"
-);
+export function updateClothing(
+id,
+changes
+){
 
-
-
-const store =
-transaction.objectStore(
-STORE_NAME
-);
-
-
-
-store.delete(id);
-
-
-
-resolve(true);
-
-
-});
-
-
-}
-// Update clothing item
-
-export function updateClothing(id, updatedData){
 
 return new Promise((resolve,reject)=>{
 
@@ -277,19 +277,19 @@ store.get(id);
 request.onsuccess=()=>{
 
 
-const item =
+const oldItem =
 request.result;
 
 
 
-if(item){
+if(oldItem){
 
 
-const updated = {
+const updated={
 
-...item,
+...oldItem,
 
-...updatedData
+...changes
 
 };
 
@@ -305,9 +305,11 @@ resolve(updated);
 
 else{
 
+
 reject(
 "Item not found"
 );
+
 
 }
 
@@ -326,6 +328,47 @@ reject(
 
 };
 
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+// Delete clothing
+
+
+export function deleteClothing(id){
+
+
+return new Promise((resolve)=>{
+
+
+const transaction =
+db.transaction(
+STORE_NAME,
+"readwrite"
+);
+
+
+const store =
+transaction.objectStore(
+STORE_NAME
+);
+
+
+
+store.delete(id);
+
+
+
+resolve(true);
 
 
 });
