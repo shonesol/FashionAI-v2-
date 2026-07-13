@@ -1,25 +1,21 @@
 // FashionAI Outfit History Controller
 
 
-
 import {
 
 openDatabase,
-getOutfitHistory
-
-}
-import {
-
+getOutfitHistory,
 toggleFavoriteOutfit
 
 }
 
 from "./local-database.js";
-from "./local-database.js";
 
 
 
 
+
+// Open local database
 
 await openDatabase();
 
@@ -37,6 +33,7 @@ document.getElementById(
 
 
 
+// Load outfit history
 
 const outfits =
 await getOutfitHistory();
@@ -46,6 +43,7 @@ await getOutfitHistory();
 
 
 
+// Empty history
 
 if(outfits.length === 0){
 
@@ -79,8 +77,6 @@ else{
 
 
 
-
-
 outfits
 .reverse()
 .forEach(outfit=>{
@@ -101,11 +97,13 @@ card.className =
 
 
 
+
 const date =
 new Date(
 outfit.date
 )
 .toLocaleDateString();
+
 
 
 
@@ -136,6 +134,7 @@ ${outfit.top?.category || ""}
 
 
 
+
 <p>
 
 👖 Bottom:
@@ -145,6 +144,7 @@ ${outfit.bottom?.color || ""}
 ${outfit.bottom?.category || ""}
 
 </p>
+
 
 
 
@@ -165,9 +165,10 @@ ${outfit.shoes?.color || "None"}
 
 🎉 Occasion:
 
-${outfit.occasion}
+${outfit.occasion || "Casual"}
 
 </p>
+
 
 
 
@@ -186,7 +187,9 @@ ${outfit.rating || "Not rated"}
 
 <p>
 
-📅 ${date}
+📅 Created:
+
+${date}
 
 </p>
 
@@ -196,12 +199,80 @@ ${outfit.rating || "Not rated"}
 
 <p>
 
-💡 ${outfit.reason || ""}
+💡
+
+${outfit.reason || ""}
 
 </p>
 
 
+
+
+
+<button class="favoriteOutfit">
+
+${outfit.favorite ? "❤️ Saved" : "🤍 Save Look"}
+
+</button>
+
+
+
 `;
+
+
+
+
+
+
+
+
+
+// Favorite button
+
+
+card
+.querySelector(
+".favoriteOutfit"
+)
+.onclick = async()=>{
+
+
+const updated =
+await toggleFavoriteOutfit(
+outfit.id
+);
+
+
+
+
+outfit.favorite =
+updated.favorite;
+
+
+
+
+card
+.querySelector(
+".favoriteOutfit"
+)
+.innerHTML =
+
+outfit.favorite
+
+?
+
+"❤️ Saved"
+
+:
+
+"🤍 Save Look";
+
+
+
+};
+
+
+
 
 
 
