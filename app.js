@@ -3,31 +3,89 @@
 // app.js
 // ==============================
 
+import { login } from "./firebase.js";
+
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Google Button
+    // ==========================
+    // Google Login
+    // ==========================
+
     const googleBtn = document.getElementById("googleLogin");
 
     if (googleBtn) {
-        googleBtn.addEventListener("click", () => {
 
-            alert("Google Sign-In will be connected in the next step.");
+        googleBtn.addEventListener("click", async () => {
+
+            const user = await login();
+
+            if (user) {
+
+                localStorage.setItem("fashionUser", JSON.stringify({
+
+                    uid: user.uid,
+                    name: user.displayName,
+                    email: user.email,
+                    photo: user.photoURL
+
+                }));
+
+                window.location.href = "home.html";
+
+            }
 
         });
+
     }
 
-    // Guest Button
+    // ==========================
+    // Guest Login
+    // ==========================
+
     const guestBtn = document.getElementById("guestLogin");
 
     if (guestBtn) {
+
         guestBtn.addEventListener("click", () => {
+
+            localStorage.setItem("guest", "true");
 
             window.location.href = "home.html";
 
         });
+
     }
 
-    // Animate Cards
+    // ==========================
+    // Greeting
+    // ==========================
+
+    const greeting = document.getElementById("greeting");
+
+    if (greeting) {
+
+        const hour = new Date().getHours();
+
+        if (hour < 12) {
+
+            greeting.textContent = "Good Morning ☀️";
+
+        } else if (hour < 18) {
+
+            greeting.textContent = "Good Afternoon 🌤";
+
+        } else {
+
+            greeting.textContent = "Good Evening 🌙";
+
+        }
+
+    }
+
+    // ==========================
+    // Card Animation
+    // ==========================
+
     document.querySelectorAll(".card,.hero-card").forEach((card, index) => {
 
         card.style.opacity = "0";
@@ -35,53 +93,26 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
 
             card.classList.add("fade-in");
+
             card.style.opacity = "1";
 
-        }, index * 200);
+        }, index * 150);
 
     });
 
-    // Quick Buttons
-    document.querySelectorAll(".quick-btn").forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            const action = button.dataset.action;
-
-            switch (action) {
-
-                case "upload":
-                    window.location.href = "upload.html";
-                    break;
-
-                case "wardrobe":
-                    window.location.href = "wardrobe.html";
-                    break;
-
-                case "outfits":
-                    window.location.href = "outfits.html";
-                    break;
-
-                case "favorites":
-                    window.location.href = "favorites.html";
-                    break;
-
-                default:
-                    alert("Coming Soon...");
-            }
-
-        });
-
-    });
-
+    // ==========================
     // Navigation
+    // ==========================
+
     document.querySelectorAll("nav button").forEach(button => {
 
         button.addEventListener("click", () => {
 
-            document
-                .querySelectorAll("nav button")
-                .forEach(btn => btn.classList.remove("active"));
+            document.querySelectorAll("nav button").forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
 
             button.classList.add("active");
 
@@ -89,49 +120,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-    // Welcome Message
-    const hour = new Date().getHours();
-
-    let greeting = "Welcome";
-
-    if (hour < 12) {
-        greeting = "Good Morning ☀️";
-    } else if (hour < 18) {
-        greeting = "Good Afternoon 🌤";
-    } else {
-        greeting = "Good Evening 🌙";
-    }
-
-    const greetingElement = document.getElementById("greeting");
-
-    if (greetingElement) {
-        greetingElement.textContent = greeting;
-    }
-
     console.log("✨ FashionAI Premium Started");
 
 });
 
 // ==============================
-// PWA Service Worker
+// Service Worker
 // ==============================
 
-if ("serviceWorker" in navigator) {
+if ("serviceWorker" in navigator") {
 
     window.addEventListener("load", () => {
 
-        navigator.serviceWorker
-            .register("sw.js")
+        navigator.serviceWorker.register("./sw.js")
             .then(() => {
 
-                console.log("✅ Service Worker Registered");
+                console.log("✅ PWA Ready");
 
             })
-            .catch(error => {
-
-                console.log(error);
-
-            });
+            .catch(console.error);
 
     });
 
