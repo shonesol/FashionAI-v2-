@@ -1,6 +1,7 @@
-// ===================================
-// FashionAI Premium Home Controller
-// ===================================
+// =================================
+// FashionAI Home Controller
+// home.js
+// =================================
 
 
 // Greeting
@@ -15,21 +16,21 @@ new Date().getHours();
 
 if(hour < 12){
 
-greeting.textContent =
+greeting.innerHTML =
 "Good Morning ☀️";
 
 }
 
 else if(hour < 18){
 
-greeting.textContent =
+greeting.innerHTML =
 "Good Afternoon 🌤";
 
 }
 
 else{
 
-greeting.textContent =
+greeting.innerHTML =
 "Good Evening 🌙";
 
 }
@@ -38,32 +39,77 @@ greeting.textContent =
 
 
 
-// Daily Fashion Quotes
+// =================================
+// Quick Actions Navigation
+// =================================
 
-const quotes = [
+
+document
+.querySelectorAll(".action")
+.forEach(action=>{
+
+
+action.addEventListener(
+"click",
+()=>{
+
+
+const page =
+action.dataset.page;
+
+
+window.location.href =
+page;
+
+
+});
+
+
+});
+
+
+
+
+
+// =================================
+// Daily Fashion Quote
+// =================================
+
+
+const quotes=[
+
 
 "Style is confidence you can wear.",
 
-"Fashion tells your story before you speak.",
 
-"Elegance begins with a beautiful choice.",
+"Fashion changes, but your style remains.",
 
-"Your wardrobe is your creative space.",
 
-"Great style starts with confidence."
+"Your outfit tells your story.",
+
+
+"Elegance begins with confidence.",
+
+
+"Beautiful clothes create beautiful moments."
+
 
 ];
 
 
+
 const today =
-new Date().getDate();
+new Date()
+.getDate();
+
 
 
 const quote =
 document.getElementById("quote");
 
 
-quote.textContent =
+
+quote.innerHTML =
 `"${quotes[today % quotes.length]}"`;
 
 
@@ -71,13 +117,20 @@ quote.textContent =
 
 
 
+// =================================
+// Bottom Navigation
+// =================================
 
-// Quick Actions Navigation
+
+const navButtons =
+document.querySelectorAll(
+".bottom-nav button"
+);
 
 
-document
-.querySelectorAll(".action")
-.forEach(button=>{
+
+navButtons.forEach(
+(button,index)=>{
 
 
 button.addEventListener(
@@ -85,18 +138,31 @@ button.addEventListener(
 ()=>{
 
 
-const page =
-button.dataset.page;
-
-
-if(page){
+if(index===1){
 
 window.location.href =
-page;
+"wardrobe.html";
 
 }
 
 
+if(index===2){
+
+window.location.href =
+"outfits.html";
+
+}
+
+
+if(index===3){
+
+window.location.href =
+"favorites.html";
+
+}
+
+
+
 });
 
 
@@ -107,117 +173,34 @@ page;
 
 
 
-
-// Bottom Navigation Animation
+// =================================
+// Page Animation
+// =================================
 
 
 document
-.querySelectorAll(".bottom-nav button")
-.forEach(btn=>{
+.querySelectorAll(
+".weather-card,.outfit-card,.assistant-card,.feature"
+)
+.forEach(
+(card,index)=>{
 
 
-btn.addEventListener(
-"click",
-()=>{
-
-
-document
-.querySelectorAll(".bottom-nav button")
-.forEach(item=>{
-
-item.classList.remove("active");
-
-});
-
-
-btn.classList.add("active");
-
-
-});
-
-
-});
-
-
-
-
-
-
-
-// Simple outfit rating animation
-
-const stars =
-document.querySelector(".stars");
-
-
-if(stars){
-
-
-stars.style.opacity="0";
+card.style.opacity="0";
 
 
 setTimeout(()=>{
 
-stars.style.transition=".8s";
 
-stars.style.opacity="1";
-
-
-},1200);
+card.style.opacity="1";
 
 
-}
+},index*200);
 
-
-
-
-
-// Future Google User Display
-
-const user =
-localStorage.getItem("fashionUser");
-
-
-if(user){
-
-
-console.log(
-"FashionAI user:",
-user
-);
-
-
-}
-
-
-
-
-// Service Worker
-
-if("serviceWorker" in navigator){
-
-
-window.addEventListener(
-"load",
-()=>{
-
-
-navigator.serviceWorker
-.register("sw.js")
-.then(()=>{
-
-console.log(
-"FashionAI offline mode ready"
-);
 
 
 });
 
-
-});
-
-
-}
 
 
 
