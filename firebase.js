@@ -16,19 +16,12 @@ from
 // Replace these with your Firebase project details
 
 const firebaseConfig = {
-
-apiKey: "YOUR_API_KEY",
-
-authDomain: "YOUR_PROJECT.firebaseapp.com",
-
-projectId: "YOUR_PROJECT_ID",
-
-storageBucket: "YOUR_PROJECT.appspot.com",
-
-messagingSenderId: "YOUR_SENDER_ID",
-
-appId: "YOUR_APP_ID"
-
+    apiKey: "AIzaSyD1__ACDdxUFjawiBr4_b6K42N-mbqe9_4",
+    authDomain: "fashionai-b443e.firebaseapp.com",
+    projectId: "fashionai-b443e",
+    storageBucket: "fashionai-b443e.firebasestorage.app",
+    messagingSenderId: "625810899658",
+    appId: "1:625810899658:web:5a0cc4cd4fbf26eaeeea33"
 };
 
 
