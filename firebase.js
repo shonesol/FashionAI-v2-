@@ -1,19 +1,13 @@
-// =================================
-// FashionAI Firebase Configuration
-// =================================
+// // firebase.js
 
-// Import Firebase functions
-import { initializeApp } from 
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import { 
-getAuth 
-}
-from 
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-
-// Replace these with your Firebase project details
+import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD1__ACDdxUFjawiBr4_b6K42N-mbqe9_4",
@@ -24,12 +18,33 @@ const firebaseConfig = {
     appId: "1:625810899658:web:5a0cc4cd4fbf26eaeeea33"
 };
 
-
-// Initialize Firebase
-
 const app = initializeApp(firebaseConfig);
 
-
-// Authentication
-
 export const auth = getAuth(app);
+
+const provider = new GoogleAuthProvider();
+
+export async function login() {
+
+    try {
+
+        const result = await signInWithPopup(auth, provider);
+
+        return result.user;
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+        return null;
+    }
+
+}
+
+export async function logout() {
+
+    await signOut(auth);
+
+}
