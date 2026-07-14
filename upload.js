@@ -3,7 +3,10 @@ saveClothing
 }
 from "./database.js";
 
-
+import {
+analyzeClothing
+}
+from "./clothing-ai.js";
 
 const imageInput =
 document.getElementById(
