@@ -1,5 +1,6 @@
 // =================================
 // FashionAI IndexedDB Storage
+// database.js
 // =================================
 
 
@@ -8,14 +9,30 @@ const DATABASE_NAME = "FashionAI_DB";
 const DATABASE_VERSION = 1;
 
 
-let db;
+let db = null;
 
+
+
+
+// ================================
+// Open Database
+// ================================
 
 
 export function openDatabase(){
 
 
 return new Promise((resolve,reject)=>{
+
+
+if(db){
+
+resolve(db);
+
+return;
+
+}
+
 
 
 const request =
@@ -29,14 +46,21 @@ DATABASE_VERSION
 request.onupgradeneeded = (event)=>{
 
 
-db = event.target.result;
+const database =
+event.target.result;
 
 
 
-if(!db.objectStoreNames.contains("wardrobe")){
+// Wardrobe storage
+
+if(
+!database.objectStoreNames.contains(
+"wardrobe"
+)
+){
 
 
-db.createObjectStore(
+database.createObjectStore(
 "wardrobe",
 {
 keyPath:"id",
@@ -49,10 +73,16 @@ autoIncrement:true
 
 
 
-if(!db.objectStoreNames.contains("favorites")){
+// Favorites storage
+
+if(
+!database.objectStoreNames.contains(
+"favorites"
+)
+){
 
 
-db.createObjectStore(
+database.createObjectStore(
 "favorites",
 {
 keyPath:"id",
@@ -61,6 +91,30 @@ autoIncrement:true
 );
 
 
+
+}
+
+
+
+// Outfit history storage
+
+if(
+!database.objectStoreNames.contains(
+"outfits"
+)
+){
+
+
+database.createObjectStore(
+"outfits",
+{
+keyPath:"id",
+autoIncrement:true
+}
+);
+
+
+
 }
 
 
@@ -70,10 +124,13 @@ autoIncrement:true
 
 
 
+
 request.onsuccess = ()=>{
 
 
-db=request.result;
+db =
+request.result;
+
 
 resolve(db);
 
@@ -82,15 +139,18 @@ resolve(db);
 
 
 
+
+
 request.onerror = ()=>{
 
 
 reject(
-"Database error"
+request.error
 );
 
 
 };
+
 
 
 });
@@ -101,16 +161,23 @@ reject(
 
 
 
-// Add clothing item
+
+
+// ================================
+// Save Clothing
+// ================================
+
 
 export function saveClothing(item){
 
 
 return openDatabase()
+
 .then(()=>{
 
 
-return new Promise((resolve,reject)=>{
+return new Promise(
+(resolve,reject)=>{
 
 
 const transaction =
@@ -128,11 +195,27 @@ transaction.objectStore(
 
 
 
-store.add(item);
+const clothing = {
+
+...item,
+
+createdAt:
+new Date().toISOString()
+
+};
 
 
 
-transaction.oncomplete=()=>{
+
+const request =
+store.add(
+clothing
+);
+
+
+
+
+request.onsuccess = ()=>{
 
 
 resolve(true);
@@ -142,13 +225,17 @@ resolve(true);
 
 
 
-transaction.onerror=()=>{
+
+request.onerror = ()=>{
 
 
-reject(false);
+reject(
+request.error
+);
 
 
 };
+
 
 
 });
@@ -162,16 +249,23 @@ reject(false);
 
 
 
-// Get wardrobe
+
+
+// ================================
+// Get Wardrobe
+// ================================
+
 
 export function getWardrobe(){
 
 
 return openDatabase()
+
 .then(()=>{
 
 
-return new Promise((resolve)=>{
+return new Promise(
+(resolve,reject)=>{
 
 
 const transaction =
@@ -194,12 +288,389 @@ store.getAll();
 
 
 
+request.onsuccess = ()=>{
+
+
+resolve(
+request.result
+);
+
+
+};
+
+
+
+request.onerror = ()=>{
+
+
+reject(
+request.error
+);
+
+
+};
+
+
+
+});
+
+
+});
+
+
+}
+
+
+
+
+
+
+// ================================
+// Delete Clothing
+// ================================
+
+
+export function deleteClothing(id){
+
+
+return openDatabase()
+
+.then(()=>{
+
+
+return new Promise(
+(resolve,reject)=>{
+
+
+const transaction =
+db.transaction(
+"wardrobe",
+"readwrite"
+);
+
+
+
+const store =
+transaction.objectStore(
+"wardrobe"
+);
+
+
+
+store.delete(id);
+
+
+
+transaction.oncomplete = ()=>{
+
+
+resolve(true);
+
+
+};
+
+
+
+transaction.onerror = ()=>{
+
+
+reject(false);
+
+
+};
+
+
+
+});
+
+
+});
+
+
+}
+
+
+
+
+
+
+// ================================
+// Save Favorite Outfit
+// ================================
+
+
+export function saveFavorite(outfit){
+
+
+return openDatabase()
+
+.then(()=>{
+
+
+return new Promise(
+(resolve,reject)=>{
+
+
+const transaction =
+db.transaction(
+"favorites",
+"readwrite"
+);
+
+
+
+const store =
+transaction.objectStore(
+"favorites"
+);
+
+
+
+store.add({
+
+...outfit,
+
+createdAt:
+new Date().toISOString()
+
+});
+
+
+
+transaction.oncomplete=()=>{
+
+
+resolve(true);
+
+
+};
+
+
+
+transaction.onerror=()=>{
+
+
+reject(false);
+
+
+};
+
+
+
+});
+
+
+});
+
+
+}
+
+
+
+
+
+
+// ================================
+// Get Favorites
+// ================================
+
+
+export function getFavorites(){
+
+
+return openDatabase()
+
+.then(()=>{
+
+
+return new Promise(
+(resolve,reject)=>{
+
+
+const transaction =
+db.transaction(
+"favorites",
+"readonly"
+);
+
+
+
+const store =
+transaction.objectStore(
+"favorites"
+);
+
+
+
+const request =
+store.getAll();
+
+
+
 request.onsuccess=()=>{
 
 
 resolve(
 request.result
 );
+
+
+};
+
+
+
+request.onerror=()=>{
+
+
+reject(false);
+
+
+};
+
+
+
+});
+
+
+});
+
+
+}
+
+
+
+
+
+
+// ================================
+// Save Generated Outfit History
+// ================================
+
+
+export function saveOutfit(outfit){
+
+
+return openDatabase()
+
+.then(()=>{
+
+
+return new Promise(
+(resolve,reject)=>{
+
+
+const transaction =
+db.transaction(
+"outfits",
+"readwrite"
+);
+
+
+
+const store =
+transaction.objectStore(
+"outfits"
+);
+
+
+
+store.add({
+
+...outfit,
+
+createdAt:
+new Date().toISOString()
+
+});
+
+
+
+transaction.oncomplete=()=>{
+
+
+resolve(true);
+
+
+};
+
+
+
+transaction.onerror=()=>{
+
+
+reject(false);
+
+
+};
+
+
+
+});
+
+
+});
+
+
+}
+
+
+
+
+
+
+// ================================
+// Get Outfit History
+// ================================
+
+
+export function getOutfits(){
+
+
+return openDatabase()
+
+.then(()=>{
+
+
+return new Promise(
+(resolve,reject)=>{
+
+
+const transaction =
+db.transaction(
+"outfits",
+"readonly"
+);
+
+
+
+const store =
+transaction.objectStore(
+"outfits"
+);
+
+
+
+const request =
+store.getAll();
+
+
+
+request.onsuccess=()=>{
+
+
+resolve(
+request.result
+);
+
+
+};
+
+
+
+request.onerror=()=>{
+
+
+reject(false);
 
 
 };
