@@ -1,62 +1,149 @@
-// FashionAI Smart Hybrid Outfit Engine
+import {
+getWardrobe
+}
+from "./database.js";
 
 
-// ==============================
-// Color Compatibility
-// ==============================
+
+let wardrobe=[];
 
 
-const colorMatches = {
 
-white:["blue","black","beige","gold","grey"],
-blue:["white","beige","black","gold"],
-black:["white","red","gold","grey"],
-beige:["white","brown","blue","gold"],
-grey:["black","white","blue"]
+const createBtn =
+document.getElementById(
+"createOutfit"
+);
+
+
+
+const result =
+document.getElementById(
+"outfitResult"
+);
+
+
+
+const display =
+document.getElementById(
+"outfitDisplay"
+);
+
+
+
+let generatedOutfit={};
+
+
+
+
+// Load clothes
+
+async function load(){
+
+wardrobe =
+await getWardrobe();
+
+}
+
+
+load();
+
+
+
+
+
+
+// Create Outfit
+
+
+createBtn.onclick =
+async()=>{
+
+
+if(wardrobe.length < 3){
+
+
+alert(
+"Add more clothes to your wardrobe first 👗"
+);
+
+
+return;
+
+}
+
+
+
+
+const shirt =
+findItem("shirt");
+
+
+const pants =
+findItem("pant") ||
+findItem("jean");
+
+
+const shoes =
+findItem("shoe");
+
+
+
+
+
+generatedOutfit={
+
+top:
+shirt || wardrobe[0],
+
+bottom:
+pants || wardrobe[1],
+
+footwear:
+shoes || wardrobe[2],
+
+score:
+95
+
 
 };
 
 
 
 
-// ==============================
-// Occasion Rules
-// ==============================
+
+result.style.display=
+"block";
 
 
-const occasionRules = {
+
+display.innerHTML=`
+
+👕 
+${generatedOutfit.top.type}
+
+<br><br>
 
 
-office:[
-"shirt",
-"blouse",
-"trousers",
-"blazer"
-],
+👖
+${generatedOutfit.bottom.type}
 
 
-casual:[
-"t-shirt",
-"shirt",
-"jeans",
-"sneakers"
-],
+<br><br>
 
 
-party:[
-"dress",
-"skirt",
-"heels",
-"accessories"
-],
+👟
+${generatedOutfit.footwear.type}
 
 
-travel:[
-"jeans",
-"shirt",
-"jacket",
-"sneakers"
-]
+<br><br>
+
+
+⭐ Style Score:
+${generatedOutfit.score}/100
+
+
+`;
+
 
 
 };
@@ -66,167 +153,17 @@ travel:[
 
 
 
-// ==============================
-// Find color matches
-// ==============================
+
+function findItem(word){
 
 
-function getMatchingColors(color){
+return wardrobe.find(item=>
 
-
-return colorMatches[
-color.toLowerCase()
-] || [];
-
-}
-
-
-
-
-
-// ==============================
-// Score clothing item
-// ==============================
-
-
-function scoreItem(
-item,
-preferences,
-occasion
-){
-
-
-let score=0;
-
-
-
-// Favorite style
-
-if(
-preferences &&
-item.style === preferences.style
-){
-
-score += 3;
-
-}
-
-
-
-// Favorite color
-
-if(
-preferences &&
-preferences.colors.includes(
-item.color
-)
-){
-
-score += 2;
-
-}
-
-
-
-// Occasion match
-
-if(
-item.occasion &&
-item.occasion.includes(
-occasion
-)
-){
-
-score += 3;
-
-}
-
-
-
-return score;
-
-}
-
-
-
-
-
-
-
-// ==============================
-// Generate Outfit
-// ==============================
-
-
-export function generateOutfit(
-
-wardrobe,
-
-occasion="casual",
-
-preferences={}
-
-){
-
-
-
-let tops =
-wardrobe.filter(item=>
-
-[
-"shirt",
-"top",
-"blouse",
-"t-shirt"
-]
-.includes(
-item.category
-)
+JSON.stringify(item)
+.toLowerCase()
+.includes(word)
 
 );
-
-
-
-let bottoms =
-wardrobe.filter(item=>
-
-[
-"pants",
-"trousers",
-"jeans",
-"skirt"
-]
-.includes(
-item.category
-)
-
-);
-
-
-
-let shoes =
-wardrobe.filter(item=>
-
-item.category==="shoes"
-
-);
-
-
-
-
-
-if(
-tops.length===0 ||
-bottoms.length===0
-){
-
-
-return {
-
-message:
-"Your wardrobe needs more items."
-
-};
 
 
 }
@@ -236,114 +173,26 @@ message:
 
 
 
+document
+.getElementById("favoriteBtn")
+.onclick=()=>{
 
-// Rank tops
 
-tops.sort(
-(a,b)=>
+localStorage.setItem(
 
-scoreItem(
-b,
-preferences,
-occasion
-)
--
-scoreItem(
-a,
-preferences,
-occasion
+"favoriteOutfit",
+
+JSON.stringify(
+generatedOutfit
 )
 
 );
 
 
 
-
-
-let chosenTop =
-tops[0];
-
-
-
-
-
-let matchingColors =
-getMatchingColors(
-chosenTop.color
+alert(
+"Outfit saved ❤️"
 );
-
-
-
-
-
-let chosenBottom =
-
-bottoms.find(item=>
-
-matchingColors.includes(
-item.color.toLowerCase()
-)
-
-)
-
-||
-bottoms[0];
-
-
-
-
-
-
-
-
-let rating = Math.min(
-
-10,
-
-scoreItem(
-chosenTop,
-preferences,
-occasion
-)
-+
-scoreItem(
-chosenBottom,
-preferences,
-occasion
-)
-
-);
-
-
-
-
-
-
-
-return {
-
-
-top:chosenTop,
-
-
-bottom:chosenBottom,
-
-
-shoes:shoes[0] || null,
-
-
-occasion:occasion,
-
-
-rating:rating,
-
-
-reason:
-
-`I selected this outfit because your ${chosenTop.color} ${chosenTop.category} matches well with your ${chosenBottom.color} ${chosenBottom.category}.`
 
 
 };
-
-
-}
