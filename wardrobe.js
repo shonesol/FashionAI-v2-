@@ -1,49 +1,7 @@
-// FashionAI Wardrobe Controller
-
-
 import {
-
-loadWardrobe,
-getWardrobe,
-searchWardrobe,
-filterWardrobe,
-toggleFavorite,
-removeClothing,
-getWardrobeStats
-
+getWardrobe
 }
-
-from "./wardrobe-manager.js";
-
-
-
-import {
-
-generateOutfit
-
-}
-
-from "./outfit-engine.js";
-
-
-
-import {
-
-saveOutfit
-
-}
-
-from "./local-database.js";
-
-
-
-
-
-// Load wardrobe
-
-await loadWardrobe();
-
-
+from "./database.js";
 
 
 
@@ -54,39 +12,55 @@ document.getElementById(
 
 
 
+const search =
+document.getElementById(
+"searchWardrobe"
+);
 
 
-// ==========================
-// Display Clothes
-// ==========================
+
+let clothes=[];
+
+
+
+
+// Load wardrobe
+
+async function loadWardrobe(){
+
+
+clothes =
+await getWardrobe();
+
+
+displayClothes(
+clothes
+);
+
+
+}
+
+
+
 
 
 function displayClothes(items){
 
 
-grid.innerHTML = "";
+grid.innerHTML="";
 
 
 
-if(items.length === 0){
+if(items.length===0){
 
 
-grid.innerHTML = `
-
-<div class="card">
-
-<h3>
-Your wardrobe is empty 👗
-</h3>
+grid.innerHTML=`
 
 <p>
-Upload clothes to start building your smart closet.
+Your wardrobe is empty 👗
 </p>
 
-</div>
-
 `;
-
 
 return;
 
@@ -95,180 +69,45 @@ return;
 
 
 
-
-
 items.forEach(item=>{
 
 
 const card =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 
 
 card.className =
-"stat-card";
+"wardrobe-item";
 
 
 
+card.innerHTML=`
 
+<div class="clothing-icon">
 
-card.innerHTML = `
-
-<img
-
-src="${item.image}"
-
-style="
-width:100%;
-height:150px;
-object-fit:cover;
-border-radius:20px;
-"
-
->
+👕
+</div>
 
 
 <h3>
-${item.category || "Clothing"}
+${item.type || "Clothing"}
 </h3>
 
 
 <p>
-🎨 ${item.color || "Unknown"}
+${item.primaryColor || ""}
 </p>
 
 
-<p>
-✨ ${item.style || "Unknown"}
-</p>
-
-
-
-<button class="favoriteBtn">
-
-${item.favorite ? "❤️" : "🤍"}
-
-</button>
-
-
-
-<button class="editBtn">
-
-✏️ Edit
-
-</button>
-
-
-
-<button class="deleteBtn">
-
-🗑 Delete
-
-</button>
+<span>
+${item.style || "Style"}
+</span>
 
 
 `;
-
-
-
-
-
-
-// Favorite
-
-card
-.querySelector(".favoriteBtn")
-.onclick = async()=>{
-
-
-await toggleFavorite(
-item.id
-);
-
-
-
-displayClothes(
-getWardrobe()
-);
-
-
-
-updateStats();
-
-
-};
-
-
-
-
-
-
-
-// Edit
-
-card
-.querySelector(".editBtn")
-.onclick = ()=>{
-
-
-localStorage.setItem(
-"editClothingID",
-item.id
-);
-
-
-
-window.location.href =
-"edit-clothing.html";
-
-
-};
-
-
-
-
-
-
-
-// Delete
-
-card
-.querySelector(".deleteBtn")
-.onclick = async()=>{
-
-
-const confirmDelete =
-confirm(
-"Delete this clothing item permanently?"
-);
-
-
-
-if(confirmDelete){
-
-
-await removeClothing(
-item.id
-);
-
-
-
-displayClothes(
-getWardrobe()
-);
-
-
-
-updateStats();
-
-
-}
-
-
-};
-
-
-
 
 
 
@@ -285,44 +124,32 @@ grid.appendChild(card);
 
 
 
-
-
-
-// Initial display
-
-displayClothes(
-getWardrobe()
-);
-
-
-
-
-
-
-
-
-
-// ==========================
 // Search
-// ==========================
 
 
-document
-.getElementById("searchBox")
-.addEventListener(
+search.addEventListener(
 "input",
-(event)=>{
+()=>{
 
 
-const results =
-searchWardrobe(
-event.target.value
+const value =
+search.value.toLowerCase();
+
+
+
+const filtered =
+clothes.filter(item=>
+
+JSON.stringify(item)
+.toLowerCase()
+.includes(value)
+
 );
 
 
 
 displayClothes(
-results
+filtered
 );
 
 
@@ -332,305 +159,21 @@ results
 
 
 
-
-
-
-
-// ==========================
-// Filters
-// ==========================
-
-
-function applyFilters(){
-
-
-const category =
-document
-.getElementById("categoryFilter")
-.value;
-
-
-
-const color =
-document
-.getElementById("colorFilter")
-.value;
-
-
-
-
-
-const results =
-filterWardrobe({
-
-category,
-
-color
-
-});
-
-
-
-
-
-displayClothes(
-results
-);
-
-
-
-}
-
-
-
-
-
-document
-.getElementById("categoryFilter")
-.addEventListener(
-"change",
-applyFilters
-);
-
-
-
-document
-.getElementById("colorFilter")
-.addEventListener(
-"change",
-applyFilters
-);
-
-
-
-
-
-
-
-
-
-// ==========================
-// Statistics
-// ==========================
-
-
-function updateStats(){
-
-
-const stats =
-getWardrobeStats();
-
-
-
-
-document
-.getElementById("stats")
-.innerHTML = `
-
-
-<p>
-👗 Total Items:
-${stats.total}
-</p>
-
-
-<p>
-❤️ Favorites:
-${stats.favorites}
-</p>
-
-
-<p>
-🎨 Colors:
-${Object.keys(stats.colors).join(", ") || "None"}
-</p>
-
-
-<p>
-👚 Categories:
-${Object.keys(stats.categories).join(", ") || "None"}
-</p>
-
-
-`;
-
-
-
-}
-
-
-
-updateStats();
-
-
-
-
-
-
-
-
-
-// ==========================
-// Outfit Generator + History
-// ==========================
-
+// Outfit Generator button
 
 document
 .getElementById("generateBtn")
-.onclick = async()=>{
+.onclick=()=>{
 
 
-
-const occasion =
-document
-.getElementById("occasion")
-.value;
-
-
-
-
-
-
-const outfit =
-generateOutfit(
-
-getWardrobe(),
-
-occasion,
-
-{
-
-style:"Elegant",
-
-colors:[
-
-"blue",
-
-"beige",
-
-"gold"
-
-]
-
-}
-
-);
-
-
-
-
-
-
-
-if(outfit.message){
-
-
-document
-.getElementById("outfitResult")
-.innerHTML = `
-
-
-<h3>
-✨ FashionAI
-</h3>
-
-
-<p>
-${outfit.message}
-</p>
-
-
-`;
-
-return;
-
-
-}
-
-
-
-
-
-
-
-
-// Save generated outfit
-
-
-await saveOutfit({
-
-top: outfit.top,
-
-bottom: outfit.bottom,
-
-shoes: outfit.shoes,
-
-occasion: outfit.occasion,
-
-rating: outfit.rating,
-
-reason: outfit.reason
-
-});
-
-
-
-
-
-
-
-
-// Show outfit
-
-
-document
-.getElementById("outfitResult")
-.innerHTML = `
-
-
-<h3>
-✨ Today's FashionAI Look
-</h3>
-
-
-
-<p>
-👕 Top:
-${outfit.top?.color || ""}
-${outfit.top?.category || ""}
-</p>
-
-
-
-<p>
-👖 Bottom:
-${outfit.bottom?.color || ""}
-${outfit.bottom?.category || ""}
-</p>
-
-
-
-<p>
-👟 Shoes:
-${outfit.shoes?.color || "Optional"}
-</p>
-
-
-
-<p>
-💡 ${outfit.reason || ""}
-</p>
-
-
-
-<p>
-⭐ Rating:
-${outfit.rating || "N/A"}/10
-</p>
-
-
-`;
-
+window.location.href=
+"outfits.html";
 
 
 };
+
+
+
+
+
+loadWardrobe();
