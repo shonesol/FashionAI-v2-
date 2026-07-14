@@ -1,151 +1,138 @@
-// FashionAI Home Controller
+// ==============================
+// FashionAI Premium
+// app.js
+// ==============================
 
+document.addEventListener("DOMContentLoaded", () => {
 
-// ================================
-// Dynamic Greeting
-// ================================
+    // Google Button
+    const googleBtn = document.getElementById("googleLogin");
 
-function updateGreeting(){
+    if (googleBtn) {
+        googleBtn.addEventListener("click", () => {
 
-    const greeting =
-    document.getElementById("greeting");
+            alert("Google Sign-In will be connected in the next step.");
 
-
-    const hour =
-    new Date().getHours();
-
-
-    let message;
-
-
-    if(hour < 12){
-
-        message = "Good Morning, Brenda 🌞";
-
+        });
     }
 
-    else if(hour < 18){
+    // Guest Button
+    const guestBtn = document.getElementById("guestLogin");
 
-        message = "Good Afternoon, Brenda ☀️";
+    if (guestBtn) {
+        guestBtn.addEventListener("click", () => {
 
+            window.location.href = "home.html";
+
+        });
     }
 
-    else{
+    // Animate Cards
+    document.querySelectorAll(".card,.hero-card").forEach((card, index) => {
 
-        message = "Good Evening, Brenda 🌙";
+        card.style.opacity = "0";
 
+        setTimeout(() => {
+
+            card.classList.add("fade-in");
+            card.style.opacity = "1";
+
+        }, index * 200);
+
+    });
+
+    // Quick Buttons
+    document.querySelectorAll(".quick-btn").forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const action = button.dataset.action;
+
+            switch (action) {
+
+                case "upload":
+                    window.location.href = "upload.html";
+                    break;
+
+                case "wardrobe":
+                    window.location.href = "wardrobe.html";
+                    break;
+
+                case "outfits":
+                    window.location.href = "outfits.html";
+                    break;
+
+                case "favorites":
+                    window.location.href = "favorites.html";
+                    break;
+
+                default:
+                    alert("Coming Soon...");
+            }
+
+        });
+
+    });
+
+    // Navigation
+    document.querySelectorAll("nav button").forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            document
+                .querySelectorAll("nav button")
+                .forEach(btn => btn.classList.remove("active"));
+
+            button.classList.add("active");
+
+        });
+
+    });
+
+    // Welcome Message
+    const hour = new Date().getHours();
+
+    let greeting = "Welcome";
+
+    if (hour < 12) {
+        greeting = "Good Morning ☀️";
+    } else if (hour < 18) {
+        greeting = "Good Afternoon 🌤";
+    } else {
+        greeting = "Good Evening 🌙";
     }
 
+    const greetingElement = document.getElementById("greeting");
 
-    greeting.textContent = message;
+    if (greetingElement) {
+        greetingElement.textContent = greeting;
+    }
 
-}
-
-
-
-updateGreeting();
-
-
-
-
-// ================================
-// Quick Actions
-// ================================
-
-
-const buttons =
-document.querySelectorAll("button");
-
-
-buttons.forEach(button=>{
-
-
-button.addEventListener("click",()=>{
-
-
-console.log(
-"FashionAI action:",
-button.textContent
-);
-
-
-// Later these will connect to:
-// Upload page
-// Wardrobe page
-// Outfit generator
-// AI Assistant
-
+    console.log("✨ FashionAI Premium Started");
 
 });
 
+// ==============================
+// PWA Service Worker
+// ==============================
 
-});
+if ("serviceWorker" in navigator) {
 
+    window.addEventListener("load", () => {
 
+        navigator.serviceWorker
+            .register("sw.js")
+            .then(() => {
 
+                console.log("✅ Service Worker Registered");
 
-// ================================
-// Demo User Data
-// (Later replaced with Firebase)
-// ================================
+            })
+            .catch(error => {
 
+                console.log(error);
 
-const userProfile = {
+            });
 
-
-name:"Brenda",
-
-
-wardrobeCount:128,
-
-
-favoriteColor:[
-"Blue",
-"Beige",
-"Gold"
-],
-
-
-style:
-"Elegant Casual"
-
-
-};
-
-
-
-console.log(
-"FashionAI User:",
-userProfile
-);
-
-
-
-
-
-// ================================
-// Future AI Connection
-// ================================
-
-
-async function loadFashionAI(){
-
-
-console.log(
-"FashionAI AI system ready..."
-);
-
-
-// Later:
-
-// 1. Get wardrobe from Firebase
-// 2. Send information to Gemini
-// 3. Receive outfit suggestion
-// 4. Display recommendation
-
+    });
 
 }
-
-
-
-loadFashionAI();
