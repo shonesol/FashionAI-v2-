@@ -1,97 +1,64 @@
-// =================================
-// FashionAI Gemini Connection
-// =================================
+// api/gemini.js
 
+export default async function handler(req, res) {
 
-const WORKER_URL =
-"https://YOUR-WORKER-URL.workers.dev/";
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Only POST requests allowed"
+    });
+  }
 
+  try {
 
+    const { prompt } = req.body;
 
-export async function askGemini(prompt,image=null){
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({
+        error: "Missing GEMINI_API_KEY"
+      });
+    }
 
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt
+                }
+              ]
+            }
+          ]
+        })
+      }
+    );
 
-try{
+    const data = await response.json();
 
+    if (data.error) {
+      return res.status(500).json({
+        error: data.error.message
+      });
+    }
 
-const body={
+    return res.status(200).json({
+      result: data.candidates?.[0]?.content?.parts?.[0]?.text || "No response from Gemini."
+    });
 
-prompt:prompt
+  } catch (error) {
 
-};
+    console.error(error);
 
+    return res.status(500).json({
+      error: error.message
+    });
 
-
-// Add image if available
-
-if(image){
-
-
-body.image=image;
-
-
-}
-
-
-
-const response =
-await fetch(
-WORKER_URL,
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:
-JSON.stringify(body)
-
-}
-
-);
-
-
-
-const data =
-await response.json();
-
-
-
-if(data.error){
-
-
-throw new Error(
-data.error
-);
-
-
-}
-
-
-
-return data.result;
-
-
-
-}
-
-catch(error){
-
-
-console.log(
-"FashionAI Error:",
-error
-);
-
-
-throw error;
-
-
-}
-
+  }
 
 }
