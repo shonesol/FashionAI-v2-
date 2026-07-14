@@ -1,49 +1,14 @@
 import {
-openDatabase,
 saveClothing
 }
-from "./local-database.js";
+from "./database.js";
 
 
-
-let imageData = null;
-
-
-
-await openDatabase();
-
-
-
-// Select image
 
 const imageInput =
 document.getElementById(
-"clothingImage"
+"imageInput"
 );
-
-
-
-imageInput.addEventListener(
-"change",
-()=>{
-
-
-const file =
-imageInput.files[0];
-
-
-
-const reader =
-new FileReader();
-
-
-
-reader.onload=()=>{
-
-
-imageData =
-reader.result;
-
 
 
 const preview =
@@ -52,10 +17,60 @@ document.getElementById(
 );
 
 
+const analyzeBtn =
+document.getElementById(
+"analyzeBtn"
+);
+
+
+const resultCard =
+document.getElementById(
+"resultCard"
+);
+
+
+
+const result =
+document.getElementById(
+"result"
+);
+
+
+const saveBtn =
+document.getElementById(
+"saveBtn"
+);
+
+
+
+let clothingData = {};
+
+
+
+
+
+// Image Preview
+
+imageInput.onchange = ()=>{
+
+
+const file =
+imageInput.files[0];
+
+
+if(file){
+
+
+const reader =
+new FileReader();
+
+
+
+reader.onload = e=>{
+
 
 preview.src =
-imageData;
-
+e.target.result;
 
 
 preview.style.display =
@@ -65,112 +80,96 @@ preview.style.display =
 };
 
 
-
 reader.readAsDataURL(file);
 
 
-});
-
-
-
-
-
-// AI Analysis button
-
-
-document
-.getElementById("analyzeBtn")
-.addEventListener(
-"click",
-()=>{
-
-
-alert(
-"FashionAI analysis will connect to Gemini here."
-);
-
-
-// Later:
-// send imageData to Gemini
-// receive category/color/style
-
-
-document.getElementById("category").value =
-"Shirt";
-
-
-document.getElementById("color").value =
-"White";
-
-
-document.getElementById("material").value =
-"Cotton";
-
-
-document.getElementById("style").value =
-"Casual";
-
-
-});
-
-
-
-
-
-
-// Save clothing
-
-
-document
-.getElementById("saveBtn")
-.addEventListener(
-"click",
-async()=>{
-
-
-const clothing={
-
-
-image:imageData,
-
-
-category:
-document.getElementById("category").value,
-
-
-color:
-document.getElementById("color").value,
-
-
-material:
-document.getElementById("material").value,
-
-
-style:
-document.getElementById("style").value,
-
-
-favorite:false,
-
-
-dateAdded:
-new Date().toISOString()
+}
 
 
 };
 
 
 
-await saveClothing(
-clothing
-);
+
+
+
+// AI Analysis Placeholder
+
+analyzeBtn.onclick = ()=>{
+
+
+resultCard.style.display =
+"block";
+
+
+
+clothingData={
+
+
+type:"Shirt",
+
+color:"White",
+
+category:"Casual",
+
+style:"Modern"
+
+
+};
+
+
+
+result.innerHTML = `
+
+👕 Type:
+${clothingData.type}
+
+<br><br>
+
+🎨 Color:
+${clothingData.color}
+
+<br><br>
+
+✨ Style:
+${clothingData.style}
+
+<br><br>
+
+Category:
+${clothingData.category}
+
+`;
+
+
+};
+
+
+
+
+
+
+// Save Clothing
+
+
+saveBtn.onclick = async()=>{
+
+
+await saveClothing({
+
+...clothingData,
+
+date:
+new Date().toISOString()
+
+
+});
 
 
 
 alert(
-"✨ Clothing saved to your FashionAI wardrobe!"
+"Saved to your wardrobe ❤️"
 );
 
 
-
-});
+};
