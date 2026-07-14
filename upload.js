@@ -2,7 +2,7 @@
 // FashionAI Upload System
 // upload.js
 // =================================
-
+console.log("✅ Upload JS loaded");
 
 import {
 saveClothing
