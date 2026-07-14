@@ -4,417 +4,188 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>FashionAI Home</title>
 
 <link rel="stylesheet" href="style.css">
 
-<link rel="manifest" href="manifest.json">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 </head>
 
-
 <body>
 
+<header class="card">
 
-<div class="home-container">
-
-
-<!-- TOP BAR -->
-
-<header class="top-bar">
-
-<button>
-☰
-</button>
-
-
-<h2>
-FashionAI
-</h2>
-
-
-<div>
-🔔 👤
-</div>
-
-
-</header>
-
-
-
-
-
-<!-- GREETING -->
-
-<section class="greeting fade-in">
-
-
-<h1 id="greeting">
+<h2 id="greeting">
 Good Morning ☀️
-</h1>
-
+</h2>
 
 <p>
 Let's create something beautiful today.
 </p>
 
+</header>
+
+<section class="stats">
+
+<div class="stat-box">
+
+<h2 id="clothCount">0</h2>
+
+<p>Clothes</p>
+
+</div>
+
+<div class="stat-box">
+
+<h2 id="favoriteCount">0</h2>
+
+<p>Favorites</p>
+
+</div>
+
+<div class="stat-box">
+
+<h2>0</h2>
+
+<p>Outfits</p>
+
+</div>
+
+<div class="stat-box">
+
+<h2>100</h2>
+
+<p>Style Score</p>
+
+</div>
 
 </section>
 
+<div class="card">
 
-
-
-
-
-<!-- WEATHER -->
-
-<section class="weather-card slide-down">
-
-
-<h2>
-🌤 26°C
-</h2>
-
-
-<p>
-Perfect weather for light colors today.
-</p>
-
-
-</section>
-
-
-
-
-
-
-<!-- FEATURES -->
-
-<section class="feature-grid">
-
-
-<div 
-class="feature"
-onclick="window.location.href='wardrobe.html'">
-
-👕
-<span>
-Clothes
-</span>
-
-</div>
-
-
-
-
-<div 
-class="feature"
-onclick="window.location.href='favorites.html'">
-
-❤️
-<span>
-Favorites
-</span>
-
-</div>
-
-
-
-
-<div 
-class="feature"
-onclick="window.location.href='outfits.html'">
-
-✨
-<span>
-Outfits
-</span>
-
-</div>
-
-
-
-
-<div 
-class="feature">
-
-📅
-<span>
-Weekly Plans
-</span>
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<!-- TODAY OUTFIT -->
-
-<section class="outfit-card upward">
-
-
-<h2>
+<h3 class="card-title">
 Today's Outfit
-</h2>
-
-
-<div class="outfit-item">
-👕 White Shirt
-</div>
-
-
-<div class="outfit-item">
-👖 Blue Jeans
-</div>
-
-
-<div class="outfit-item">
-👟 White Sneakers
-</div>
-
-
-<div class="stars">
-⭐⭐⭐⭐⭐
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<!-- ASSISTANT -->
-
-<section class="assistant-card">
-
-
-<h2>
-🤖 FashionAI Assistant
-</h2>
-
-
-<p>
-
-👋 Hello!<br><br>
-
-I'm FashionAI.<br>
-
-Ready to build something beautiful today?
-
-</p>
-
-
-<button onclick="window.location.href='assistant.html'">
-
-💬 Ask FashionAI
-
-</button>
-
-
-</section>
-
-
-
-
-
-
-
-
-
-<!-- QUICK ACTIONS -->
-
-<section class="quick-actions">
-
-
-<h2>
-Quick Actions
-</h2>
-
-
-
-<div class="action-grid">
-
-
-
-<div 
-class="action"
-data-page="upload.html"
-onclick="window.location.href='upload.html'">
-
-
-📷
-
-<span>
-Upload
-</span>
-
-
-</div>
-
-
-
-
-
-<div 
-class="action"
-data-page="wardrobe.html"
-onclick="window.location.href='wardrobe.html'">
-
-
-👗
-
-<span>
-Wardrobe
-</span>
-
-
-</div>
-
-
-
-
-
-<div 
-class="action"
-data-page="outfits.html"
-onclick="window.location.href='outfits.html'">
-
-
-✨
-
-<span>
-Outfits
-</span>
-
-
-</div>
-
-
-
-
-
-<div 
-class="action"
-data-page="favorites.html"
-onclick="window.location.href='favorites.html'">
-
-
-❤️
-
-<span>
-Favorites
-</span>
-
-
-</div>
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<!-- DAILY QUOTE -->
-
-<section class="quote-card">
-
-
-<h3>
-Fashion Quote
 </h3>
 
+<p>
 
-<p id="quote">
+👕 White Shirt
 
-"Style never goes out of fashion."
+<br><br>
+
+👖 Blue Jeans
+
+<br><br>
+
+👟 White Sneakers
+
+<br><br>
+
+⭐⭐⭐⭐⭐
 
 </p>
 
+</div>
 
-</section>
+<div class="card">
 
+<h3 class="card-title">
 
+FashionAI Assistant
 
+</h3>
 
+<p>
 
+Hi! 👋
+
+I'm FashionAI.
+
+How can I help you today?
+
+</p>
+
+<br>
+
+<button class="google-btn">
+
+💬 Chat with FashionAI
+
+</button>
 
 </div>
 
+<div class="card">
 
+<h3 class="card-title">
 
+Quick Actions
 
+</h3>
 
+<div class="quick-grid">
 
+<div class="quick-btn" data-action="upload">
 
-<!-- BOTTOM NAV -->
+📷 Upload
 
-<nav class="bottom-nav">
+</div>
 
+<div class="quick-btn" data-action="wardrobe">
 
-<button onclick="window.location.href='home.html'">
+👗 Wardrobe
 
-🏠
+</div>
+
+<div class="quick-btn" data-action="outfits">
+
+✨ Outfits
+
+</div>
+
+<div class="quick-btn" data-action="favorites">
+
+❤️ Favorites
+
+</div>
+
+</div>
+
+</div>
+
+<nav>
+
+<button class="active">
+
+🏠 Home
 
 </button>
 
+<button>
 
-
-<button onclick="window.location.href='wardrobe.html'">
-
-👗
+👗 Wardrobe
 
 </button>
 
+<button>
 
-
-<button onclick="window.location.href='outfits.html'">
-
-✨
+✨ Outfits
 
 </button>
 
+<button>
 
-
-<button onclick="window.location.href='favorites.html'">
-
-❤️
+⚙ Settings
 
 </button>
-
 
 </nav>
 
-
-
-
-
-
-
-<script type="module" src="home.js"></script>
-
+<script src="app.js"></script>
 
 </body>
 
