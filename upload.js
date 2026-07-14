@@ -98,27 +98,55 @@ reader.readAsDataURL(file);
 
 // AI Analysis Placeholder
 
-analyzeBtn.onclick = ()=>{
+analyzeBtn.onclick = async()=>{
+
+
+const file =
+imageInput.files[0];
+
+
+if(!file){
+
+alert(
+"Please upload an image first"
+);
+
+return;
+
+}
+
+
+
+analyzeBtn.innerHTML =
+"🤖 FashionAI is analyzing...";
+
+
+
+const reader =
+new FileReader();
+
+
+
+reader.onload = async()=>{
+
+
+const image =
+reader.result;
+
+
+
+try{
+
+
+clothingData =
+await analyzeClothing(
+image
+);
+
 
 
 resultCard.style.display =
 "block";
-
-
-
-clothingData={
-
-
-type:"Shirt",
-
-color:"White",
-
-category:"Casual",
-
-style:"Modern"
-
-
-};
 
 
 
@@ -130,7 +158,12 @@ ${clothingData.type}
 <br><br>
 
 🎨 Color:
-${clothingData.color}
+${clothingData.primaryColor}
+
+<br><br>
+
+🧵 Material:
+${clothingData.material}
 
 <br><br>
 
@@ -139,10 +172,37 @@ ${clothingData.style}
 
 <br><br>
 
-Category:
-${clothingData.category}
+🎯 Occasion:
+${clothingData.occasion}
 
 `;
+
+
+
+}
+
+
+catch(error){
+
+
+alert(
+"AI analysis failed"
+);
+
+
+}
+
+
+
+analyzeBtn.innerHTML =
+"🤖 Analyze With FashionAI";
+
+
+};
+
+
+
+reader.readAsDataURL(file);
 
 
 };
