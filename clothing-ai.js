@@ -1,5 +1,5 @@
 // =================================
-// FashionAI Hybrid Analyzer
+// FashionAI Clothing Vision
 // =================================
 
 
@@ -9,28 +9,10 @@ askGemini
 from "./gemini-ai.js";
 
 
-import {
-localAnalyze
-}
-from "./local-fashion-ai.js";
-
-
 
 
 export async function analyzeClothing(image){
 
-
-
-// 1. Local analysis first
-
-const localResult =
-localAnalyze(image);
-
-
-
-
-
-// 2. Cloud AI enhancement
 
 
 const prompt = `
@@ -40,6 +22,8 @@ You are FashionAI.
 Analyze this clothing image.
 
 Return ONLY JSON.
+
+Format:
 
 {
 "type":"",
@@ -56,10 +40,8 @@ Return ONLY JSON.
 
 
 
-try{
 
-
-const aiResult =
+const response =
 await askGemini(
 prompt,
 image
@@ -67,61 +49,34 @@ image
 
 
 
-const cloudResult =
-JSON.parse(
-aiResult
+try{
+
+
+return JSON.parse(
+response
 );
 
 
-
-// Combine results
-
-return {
-
-
-...localResult,
-
-
-...cloudResult,
-
-
-analyzedBy:
-"Hybrid FashionAI"
-
-
-};
-
-
-
 }
 
-catch(error){
-
-
-// If internet fails,
-// use offline result
+catch{
 
 
 return {
-
-
-...localResult,
-
 
 type:"Unknown",
 
+category:"Unknown",
+
 primaryColor:"Unknown",
 
-style:"Unknown",
-
-analyzedBy:
-"Offline FashionAI"
-
+style:"Unknown"
 
 };
 
 
 }
+
 
 
 }
