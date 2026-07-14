@@ -1,12 +1,24 @@
+// =================================
+// FashionAI Upload System
+// upload.js
+// =================================
+
+
 import {
 saveClothing
 }
 from "./database.js";
 
+
 import {
 analyzeClothing
 }
 from "./clothing-ai.js";
+
+
+
+
+// Elements
 
 const imageInput =
 document.getElementById(
@@ -32,7 +44,6 @@ document.getElementById(
 );
 
 
-
 const result =
 document.getElementById(
 "result"
@@ -46,22 +57,39 @@ document.getElementById(
 
 
 
-let clothingData = {};
+
+// Storage
+
+let selectedImage = null;
+
+let clothingData = null;
 
 
 
 
 
+// ================================
 // Image Preview
+// ================================
 
-imageInput.onchange = ()=>{
+
+imageInput.addEventListener(
+"change",
+()=>{
 
 
 const file =
 imageInput.files[0];
 
 
-if(file){
+
+if(!file)
+return;
+
+
+
+selectedImage=file;
+
 
 
 const reader =
@@ -69,11 +97,11 @@ new FileReader();
 
 
 
-reader.onload = e=>{
+reader.onload=(event)=>{
 
 
 preview.src =
-e.target.result;
+event.target.result;
 
 
 preview.style.display =
@@ -83,43 +111,56 @@ preview.style.display =
 };
 
 
+
 reader.readAsDataURL(file);
 
 
-}
 
-
-};
+});
 
 
 
 
 
 
-// AI Analysis Placeholder
-
-analyzeBtn.onclick = async()=>{
-
-
-const file =
-imageInput.files[0];
+// ================================
+// Analyze Clothing
+// ================================
 
 
-if(!file){
+analyzeBtn.addEventListener(
+"click",
+async()=>{
+
+
+if(!selectedImage){
+
 
 alert(
-"Please upload an image first"
+"Please choose a clothing photo first 👗"
 );
+
 
 return;
 
+
 }
+
 
 
 
 analyzeBtn.innerHTML =
-"🤖 FashionAI is analyzing...";
 
+"🤖 FashionAI analyzing...";
+
+
+
+analyzeBtn.disabled=true;
+
+
+
+
+try{
 
 
 const reader =
@@ -127,15 +168,12 @@ new FileReader();
 
 
 
-reader.onload = async()=>{
+reader.onload=async(event)=>{
 
 
 const image =
-reader.result;
+event.target.result;
 
-
-
-try{
 
 
 clothingData =
@@ -145,37 +183,187 @@ image
 
 
 
+
 resultCard.style.display =
 "block";
 
 
 
+
+
 result.innerHTML = `
 
-👕 Type:
-${clothingData.type}
 
-<br><br>
+<div>
 
-🎨 Color:
-${clothingData.primaryColor}
+👕 <b>Type:</b>
 
-<br><br>
+${clothingData.type || "Unknown"}
 
-🧵 Material:
-${clothingData.material}
+</div>
 
-<br><br>
 
-✨ Style:
-${clothingData.style}
+<br>
 
-<br><br>
 
-🎯 Occasion:
-${clothingData.occasion}
+<div>
+
+🎨 <b>Color:</b>
+
+${clothingData.primaryColor || "Unknown"}
+
+</div>
+
+
+
+<br>
+
+
+<div>
+
+🧵 <b>Material:</b>
+
+${clothingData.material || "Unknown"}
+
+</div>
+
+
+
+<br>
+
+
+<div>
+
+✨ <b>Style:</b>
+
+${clothingData.style || "Unknown"}
+
+</div>
+
+
+
+<br>
+
+
+<div>
+
+🎯 <b>Occasion:</b>
+
+${clothingData.occasion || "Unknown"}
+
+</div>
+
 
 `;
+
+
+
+analyzeBtn.innerHTML =
+
+"🤖 Analyze With FashionAI";
+
+
+analyzeBtn.disabled=false;
+
+
+
+};
+
+
+
+reader.readAsDataURL(
+selectedImage
+);
+
+
+
+}
+
+catch(error){
+
+
+console.error(
+error
+);
+
+
+
+resultCard.style.display=
+"block";
+
+
+
+result.innerHTML=
+
+`
+❌ AI could not analyze this image.
+
+Please try again.
+`;
+
+
+
+analyzeBtn.innerHTML =
+
+"🤖 Analyze With FashionAI";
+
+
+analyzeBtn.disabled=false;
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+
+// ================================
+// Save To Wardrobe
+// ================================
+
+
+saveBtn.addEventListener(
+"click",
+async()=>{
+
+
+if(!clothingData){
+
+
+alert(
+"Analyze the clothing first 👗"
+);
+
+
+return;
+
+
+}
+
+
+
+try{
+
+
+await saveClothing({
+
+...clothingData,
+
+image:selectedImage
+
+});
+
+
+
+alert(
+"❤️ Saved successfully to your wardrobe"
+);
 
 
 
@@ -185,8 +373,11 @@ ${clothingData.occasion}
 catch(error){
 
 
+console.error(error);
+
+
 alert(
-"AI analysis failed"
+"Could not save clothing"
 );
 
 
@@ -194,45 +385,4 @@ alert(
 
 
 
-analyzeBtn.innerHTML =
-"🤖 Analyze With FashionAI";
-
-
-};
-
-
-
-reader.readAsDataURL(file);
-
-
-};
-
-
-
-
-
-
-// Save Clothing
-
-
-saveBtn.onclick = async()=>{
-
-
-await saveClothing({
-
-...clothingData,
-
-date:
-new Date().toISOString()
-
-
 });
-
-
-
-alert(
-"Saved to your wardrobe ❤️"
-);
-
-
-};
