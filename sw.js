@@ -1,36 +1,140 @@
+// =====================================
+// FashionAI Service Worker
+// sw.js
+// =====================================
+
 const CACHE_NAME = "fashionai-v1";
 
-const FILES = [
-    "./",
-    "./index.html",
-    "./home.html",
-    "./style.css",
-    "./app.js",
-    "./manifest.json"
+const FILES_TO_CACHE = [
+
+"/",
+
+"/index.html",
+
+"/style.css",
+
+"/app.js",
+
+"/db.js",
+
+"/upload.js",
+
+"/wardrobe.js",
+
+"/fashion-ai.js",
+
+"/voice-assistant.js",
+
+"/manifest.json"
+
 ];
 
-self.addEventListener("install", event => {
+// ==============================
+// Install
+// ==============================
 
-    event.waitUntil(
+self.addEventListener("install",event=>{
 
-        caches.open(CACHE_NAME)
-        .then(cache => cache.addAll(FILES))
+event.waitUntil(
 
-    );
+caches.open(CACHE_NAME)
+
+.then(cache=>{
+
+return cache.addAll(FILES_TO_CACHE);
+
+})
+
+);
+
+self.skipWaiting();
 
 });
 
-self.addEventListener("fetch", event => {
 
-    event.respondWith(
+// ==============================
+// Activate
+// ==============================
 
-        caches.match(event.request)
-        .then(response => {
+self.addEventListener("activate",event=>{
 
-            return response || fetch(event.request);
+event.waitUntil(
 
-        })
+caches.keys()
 
-    );
+.then(keys=>{
+
+return Promise.all(
+
+keys.map(key=>{
+
+if(key!==CACHE_NAME){
+
+return caches.delete(key);
+
+}
+
+})
+
+);
+
+})
+
+);
+
+self.clients.claim();
+
+});
+
+
+// ==============================
+// Fetch
+// ==============================
+
+self.addEventListener("fetch",event=>{
+
+event.respondWith(
+
+caches.match(event.request)
+
+.then(response=>{
+
+if(response){
+
+return response;
+
+}
+
+return fetch(event.request)
+
+.then(networkResponse=>{
+
+if(event.request.method==="GET"){
+
+const clone=networkResponse.clone();
+
+caches.open(CACHE_NAME)
+
+.then(cache=>{
+
+cache.put(event.request,clone);
+
+});
+
+}
+
+return networkResponse;
+
+})
+
+.catch(()=>{
+
+return caches.match("/index.html");
+
+});
+
+})
+
+);
 
 });
