@@ -1,209 +1,97 @@
-// =================================
-// FashionAI Home Controller
-// home.js
-// =================================
+// =====================================
+// FashionAI Premium Dashboard
+// =====================================
 
+import { getAllClothes } from "./db.js";
+import FashionAI from "./fashion-ai.js";
 
-// Greeting
+document.addEventListener("DOMContentLoaded", async () => {
 
-const greeting =
-document.getElementById("greeting");
+    await loadDashboard();
 
+    loadGreeting();
 
-const hour =
-new Date().getHours();
-
-
-if(hour < 12){
-
-greeting.innerHTML =
-"Good Morning ☀️";
-
-}
-
-else if(hour < 18){
-
-greeting.innerHTML =
-"Good Afternoon 🌤";
-
-}
-
-else{
-
-greeting.innerHTML =
-"Good Evening 🌙";
-
-}
-
-
-
-
-
-// =================================
-// Quick Actions Navigation
-// =================================
-
-
-document
-.querySelectorAll(".action")
-.forEach(action=>{
-
-
-action.addEventListener(
-"click",
-()=>{
-
-
-const page =
-action.dataset.page;
-
-
-window.location.href =
-page;
-
+    loadStatistics();
 
 });
 
+async function loadDashboard(){
 
-});
+    const clothes = await getAllClothes();
 
+    // Total Clothes
+    const total = document.getElementById("totalClothes");
 
+    if(total){
 
+        total.textContent = clothes.length;
 
+    }
 
-// =================================
-// Daily Fashion Quote
-// =================================
+    // Favorite Clothes
+    const favorites = clothes.filter(item => item.favorite);
 
+    const favoriteCount = document.getElementById("favoriteCount");
 
-const quotes=[
+    if(favoriteCount){
 
+        favoriteCount.textContent = favorites.length;
 
-"Style is confidence you can wear.",
+    }
 
+    // Clean Clothes
+    const clean = clothes.filter(item =>
+        item.laundryStatus === "Clean"
+    );
 
-"Fashion changes, but your style remains.",
+    const cleanCount = document.getElementById("cleanCount");
 
+    if(cleanCount){
 
-"Your outfit tells your story.",
+        cleanCount.textContent = clean.length;
 
+    }
 
-"Elegance begins with confidence.",
+    // AI Summary
+    const summary = await FashionAI.wardrobeSummary(clothes);
 
-
-"Beautiful clothes create beautiful moments."
-
-
-];
-
-
-
-const today =
-new Date()
-.getDate();
-
-
-
-const quote =
-document.getElementById("quote");
-
-
-
-quote.innerHTML =
-`"${quotes[today % quotes.length]}"`;
-
-
-
-
-
-
-// =================================
-// Bottom Navigation
-// =================================
-
-
-const navButtons =
-document.querySelectorAll(
-".bottom-nav button"
-);
-
-
-
-navButtons.forEach(
-(button,index)=>{
-
-
-button.addEventListener(
-"click",
-()=>{
-
-
-if(index===1){
-
-window.location.href =
-"wardrobe.html";
+    console.log(summary);
 
 }
 
+function loadGreeting(){
 
-if(index===2){
+    const greeting = document.getElementById("greeting");
 
-window.location.href =
-"outfits.html";
+    if(!greeting) return;
+
+    const hour = new Date().getHours();
+
+    if(hour < 12){
+
+        greeting.textContent = "☀️ Good Morning";
+
+    }else if(hour < 18){
+
+        greeting.textContent = "🌤 Good Afternoon";
+
+    }else{
+
+        greeting.textContent = "🌙 Good Evening";
+
+    }
 
 }
 
+function loadStatistics(){
 
-if(index===3){
+    const today = document.getElementById("todayDate");
 
-window.location.href =
-"favorites.html";
+    if(today){
+
+        today.textContent =
+            new Date().toDateString();
+
+    }
 
 }
-
-
-
-});
-
-
-});
-
-
-
-
-
-
-// =================================
-// Page Animation
-// =================================
-
-
-document
-.querySelectorAll(
-".weather-card,.outfit-card,.assistant-card,.feature"
-)
-.forEach(
-(card,index)=>{
-
-
-card.style.opacity="0";
-
-
-setTimeout(()=>{
-
-
-card.style.opacity="1";
-
-
-},index*200);
-
-
-
-});
-
-
-
-
-console.log(
-"✨ FashionAI Home Loaded"
-);
