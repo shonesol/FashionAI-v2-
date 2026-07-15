@@ -1,50 +1,56 @@
-// // firebase.js
+// =====================================
+// FashionAI Firebase
+// firebase.js
+// =====================================
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
     getAuth,
     GoogleAuthProvider,
     signInWithPopup,
-    signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
+
     apiKey: "AIzaSyD1__ACDdxUFjawiBr4_b6K42N-mbqe9_4",
+
     authDomain: "fashionai-b443e.firebaseapp.com",
+
     projectId: "fashionai-b443e",
+
     storageBucket: "fashionai-b443e.firebasestorage.app",
+
     messagingSenderId: "625810899658",
+
     appId: "1:625810899658:web:5a0cc4cd4fbf26eaeeea33"
+
 };
 
 const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
+const auth = getAuth(app);
 
 const provider = new GoogleAuthProvider();
 
-export async function login() {
+provider.setCustomParameters({
 
-    try {
+    prompt: "select_account"
 
-        const result = await signInWithPopup(auth, provider);
+});
 
-        return result.user;
+export {
 
-    } catch (error) {
+    auth,
 
-        console.error(error);
+    provider,
 
-        alert(error.message);
+    signInWithPopup,
 
-        return null;
-    }
+    signOut,
 
-}
+    onAuthStateChanged
 
-export async function logout() {
-
-    await signOut(auth);
-
-}
+};
