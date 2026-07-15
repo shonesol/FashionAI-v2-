@@ -1,327 +1,917 @@
-/* ===========================
+/* ======================================
    FashionAI Premium Theme
-=========================== */
-
-:root{
---bg:#F7F0E6;
---card:#FFF8EF;
---blue:#123A73;
---orange:#F28C28;
---gold:#D4AF37;
---text:#2E2E2E;
---white:#ffffff;
-}
+====================================== */
 
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+font-family:"Poppins",sans-serif;
+}
+
+html{
+
+scroll-behavior:smooth;
+
 }
 
 body{
-background:var(--bg);
-color:var(--text);
+
+background:#F7F0E6;
+
+color:#123A73;
+
 min-height:100vh;
+
 overflow-x:hidden;
+
 }
 
-/* Background Glow */
 
-.background-glow{
-position:fixed;
-top:-200px;
-left:-150px;
-width:450px;
-height:450px;
-background:radial-gradient(var(--gold),transparent 70%);
-opacity:.18;
-z-index:-1;
-}
 
-/* Login */
+/* ==========================
+Header
+========================== */
 
-.login-container{
-max-width:420px;
-margin:auto;
-padding:35px 20px;
-text-align:center;
-}
+header{
 
-.logo-circle{
-width:110px;
-height:110px;
-margin:auto;
-border-radius:50%;
-background:linear-gradient(135deg,var(--blue),var(--orange));
+height:70px;
+
+background:#123A73;
+
+color:white;
+
 display:flex;
-justify-content:center;
+
+justify-content:space-between;
+
 align-items:center;
-font-size:48px;
-color:#fff;
-box-shadow:0 15px 35px rgba(0,0,0,.15);
-animation:float 3s infinite ease-in-out;
+
+padding:0 20px;
+
+position:sticky;
+
+top:0;
+
+z-index:1000;
+
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+
 }
 
-.logo-title{
-font-size:40px;
+.logo{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+}
+
+.logo img{
+
+width:42px;
+
+height:42px;
+
+border-radius:50%;
+
+}
+
+.logo h1{
+
+font-size:24px;
+
 font-weight:700;
-color:var(--blue);
-margin-top:20px;
+
+color:#F7F0E6;
+
 }
 
-.logo-subtitle{
-color:#666;
-margin-top:8px;
-margin-bottom:30px;
+
+
+/* ==========================
+Navigation
+========================== */
+
+nav{
+
+display:flex;
+
+gap:15px;
+
+}
+
+nav a{
+
+text-decoration:none;
+
+color:white;
+
+font-weight:500;
+
+transition:.3s;
+
+}
+
+nav a:hover{
+
+color:#D4AF37;
+
+}
+
+
+
+/* ==========================
+Buttons
+========================== */
+
+button{
+
+border:none;
+
+cursor:pointer;
+
+border-radius:12px;
+
+padding:12px 22px;
+
+font-size:15px;
+
+font-weight:600;
+
+transition:.3s;
+
+}
+
+.primary-btn{
+
+background:#F28C28;
+
+color:white;
+
+}
+
+.primary-btn:hover{
+
+background:#D97706;
+
+transform:translateY(-2px);
+
+}
+
+.secondary-btn{
+
+background:#123A73;
+
+color:white;
+
+}
+
+.secondary-btn:hover{
+
+background:#0E2C58;
+
+}
+
+.gold-btn{
+
+background:#D4AF37;
+
+color:#123A73;
+
+}
+
+.gold-btn:hover{
+
+transform:scale(1.05);
+
+}
+
+
+
+/* ==========================
+Hero Section
+========================== */
+
+.hero{
+
+padding:50px 25px;
+
+text-align:center;
+
+}
+
+.hero h2{
+
+font-size:38px;
+
+margin-bottom:15px;
+
+}
+
+.hero p{
+
+font-size:18px;
+
+color:#555;
+
+max-width:700px;
+
+margin:auto;
+
+line-height:1.7;
+
+}
+
+.hero-buttons{
+
+margin-top:30px;
+
+display:flex;
+
+justify-content:center;
+
+gap:15px;
+
+flex-wrap:wrap;
+
+}
+
+/* ======================================
+   Premium Cards
+====================================== */
+
+.card{
+
+background:#FFFFFF;
+
+border-radius:20px;
+
+padding:20px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+margin-bottom:20px;
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-5px);
+
+box-shadow:0 15px 35px rgba(0,0,0,.12);
+
 }
 
 .hero-card{
-background:var(--card);
-padding:30px;
-border-radius:25px;
-box-shadow:0 12px 30px rgba(0,0,0,.08);
+
+background:linear-gradient(135deg,#123A73,#1E5AA8);
+
+color:white;
+
+padding:35px;
+
+border-radius:24px;
+
+box-shadow:0 15px 35px rgba(18,58,115,.30);
+
+margin:20px;
+
 }
 
 .hero-card h2{
-color:var(--blue);
+
+font-size:34px;
+
 margin-bottom:15px;
+
 }
 
 .hero-card p{
-line-height:1.6;
-margin-bottom:25px;
+
+font-size:17px;
+
+line-height:1.7;
+
+opacity:.95;
+
 }
 
-/* Buttons */
 
-.google-btn,
-.guest-btn{
-width:100%;
-border:none;
-padding:16px;
-border-radius:16px;
-font-size:16px;
-font-weight:600;
-cursor:pointer;
-transition:.3s;
-margin-bottom:15px;
-}
 
-.google-btn{
-background:var(--blue);
-color:#fff;
-display:flex;
-align-items:center;
-justify-content:center;
-gap:10px;
-}
+/* ======================================
+   Dashboard Statistics
+====================================== */
 
-.google-btn img{
-width:22px;
-}
+.stats-grid{
 
-.google-btn:hover{
-background:#0f2d59;
-transform:translateY(-3px);
-}
-
-.guest-btn{
-background:var(--orange);
-color:#fff;
-}
-
-.guest-btn:hover{
-transform:translateY(-3px);
-background:#db7d1f;
-}
-
-.privacy{
-margin-top:25px;
-font-size:13px;
-color:#777;
-}
-
-/* Cards */
-
-.card{
-background:var(--card);
-border-radius:20px;
-padding:20px;
-margin:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-.card-title{
-font-size:20px;
-font-weight:600;
-color:var(--blue);
-margin-bottom:15px;
-}
-
-/* Statistics */
-
-.stats{
 display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:15px;
-margin-top:20px;
+
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+
+gap:18px;
+
+padding:20px;
+
 }
 
-.stat-box{
-background:var(--white);
-padding:20px;
+.stat-card{
+
+background:white;
+
 border-radius:18px;
+
+padding:20px;
+
 text-align:center;
-box-shadow:0 8px 18px rgba(0,0,0,.05);
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+transition:.3s;
+
 }
 
-.stat-box h2{
-color:var(--orange);
-font-size:28px;
+.stat-card:hover{
+
+transform:translateY(-4px);
+
 }
 
-.stat-box p{
-color:#666;
-margin-top:8px;
+.stat-card h3{
+
+font-size:34px;
+
+color:#F28C28;
+
+margin-bottom:10px;
+
 }
 
-/* Quick Buttons */
+.stat-card p{
 
-.quick-grid{
+font-size:15px;
+
+color:#123A73;
+
+font-weight:600;
+
+}
+
+
+
+/* ======================================
+   Quick Actions
+====================================== */
+
+.quick-actions{
+
 display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:15px;
-margin-top:20px;
+
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+
+gap:16px;
+
+padding:20px;
+
 }
 
 .quick-btn{
-background:linear-gradient(135deg,var(--blue),var(--orange));
-color:#fff;
+
+background:#123A73;
+
+color:white;
+
 padding:18px;
+
 border-radius:18px;
+
 text-align:center;
+
 font-weight:600;
-cursor:pointer;
+
 transition:.3s;
+
 }
 
 .quick-btn:hover{
-transform:scale(1.05);
+
+background:#F28C28;
+
+transform:scale(1.03);
+
 }
 
-/* Navigation */
 
-nav{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:#fff;
-display:flex;
-justify-content:space-around;
-padding:15px 0;
-box-shadow:0 -5px 20px rgba(0,0,0,.08);
+
+/* ======================================
+   Wardrobe Cards
+====================================== */
+
+.wardrobe-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+
+gap:20px;
+
+padding:20px;
+
 }
 
-nav button{
-border:none;
-background:none;
-font-size:15px;
-font-weight:600;
-color:#666;
-cursor:pointer;
-}
+.clothing-card{
 
-nav button.active{
-color:var(--blue);
-}
+background:white;
 
-/* Inputs */
-
-input,
-select,
-textarea{
-width:100%;
-padding:15px;
-margin-top:12px;
-border:2px solid #eee;
-border-radius:15px;
-font-size:15px;
-outline:none;
-transition:.3s;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-border-color:var(--orange);
-}
-
-/* Upload Preview */
-
-.preview-container{
-margin-top:20px;
-background:#f3f3f3;
 border-radius:20px;
+
 overflow:hidden;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+transition:.3s;
+
 }
 
-.preview-container img{
+.clothing-card:hover{
+
+transform:translateY(-6px);
+
+}
+
+.clothing-image{
+
 width:100%;
-display:block;
-}
 
-/* Animations */
+height:240px;
 
-@keyframes float{
-
-0%{
-transform:translateY(0);
-}
-
-50%{
-transform:translateY(-12px);
-}
-
-100%{
-transform:translateY(0);
-}
+object-fit:cover;
 
 }
 
-.fade-in{
-animation:fade .8s ease;
-}
+.clothing-details{
 
-@keyframes fade{
-
-from{
-opacity:0;
-transform:translateY(20px);
-}
-
-to{
-opacity:1;
-transform:translateY(0);
-}
+padding:18px;
 
 }
 
-/* Mobile */
+.clothing-details h3{
+
+color:#123A73;
+
+margin-bottom:10px;
+
+}
+
+.clothing-details p{
+
+margin:6px 0;
+
+color:#555;
+
+font-size:14px;
+
+}
+
+.card-buttons{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-top:15px;
+
+}
+
+
+
+/* ======================================
+   AI Assistant
+====================================== */
+
+.ai-card{
+
+background:linear-gradient(135deg,#F7F0E6,#FFF9EE);
+
+border:2px solid #D4AF37;
+
+border-radius:22px;
+
+padding:25px;
+
+margin:20px;
+
+}
+
+.ai-card h2{
+
+color:#123A73;
+
+margin-bottom:12px;
+
+}
+
+.ai-card textarea,
+
+.ai-card input{
+
+width:100%;
+
+padding:14px;
+
+border-radius:12px;
+
+border:1px solid #ddd;
+
+margin-top:12px;
+
+margin-bottom:15px;
+
+font-size:15px;
+
+}
+
+
+
+/* ======================================
+   Responsive
+====================================== */
 
 @media(max-width:768px){
 
-.logo-title{
-font-size:32px;
+.hero h2{
+
+font-size:28px;
+
 }
 
 .hero-card{
-padding:22px;
+
+margin:12px;
+
+padding:25px;
+
 }
 
-.card{
-margin:15px;
+.stats-grid{
+
+grid-template-columns:1fr 1fr;
+
+}
+
+.quick-actions{
+
+grid-template-columns:1fr 1fr;
+
+}
+
+.wardrobe-grid{
+
+grid-template-columns:1fr;
+
+}
+
+header{
+
+padding:0 15px;
+
+}
+
+nav{
+
+gap:8px;
+
+}
+
+}
+
+
+
+/* ======================================
+   Animations
+====================================== */
+
+.fade-in{
+
+animation:fadeIn .6s ease;
+
+}
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+.slide-up{
+
+animation:slideUp .5s ease;
+
+}
+
+@keyframes slideUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(30px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+/* ======================================
+   Upload Section
+====================================== */
+
+.upload-container{
+
+max-width:1100px;
+
+margin:30px auto;
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:30px;
+
+padding:20px;
+
+}
+
+.image-upload-card{
+
+background:#FFFFFF;
+
+border-radius:25px;
+
+padding:25px;
+
+box-shadow:0 12px 30px rgba(0,0,0,.08);
+
+text-align:center;
+
+}
+
+.upload-label{
+
+display:block;
+
+padding:18px;
+
+background:#F28C28;
+
+color:#fff;
+
+font-weight:600;
+
+border-radius:15px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.upload-label:hover{
+
+background:#D97706;
+
+}
+
+.preview-container{
+
+margin-top:25px;
+
+}
+
+.preview-container img{
+
+width:100%;
+
+max-height:420px;
+
+object-fit:cover;
+
+border-radius:20px;
+
+background:#F3F3F3;
+
+}
+
+.clothing-form{
+
+background:#FFFFFF;
+
+padding:25px;
+
+border-radius:25px;
+
+box-shadow:0 12px 30px rgba(0,0,0,.08);
+
+}
+
+.clothing-form input,
+.clothing-form select,
+.clothing-form textarea{
+
+width:100%;
+
+padding:15px;
+
+margin-bottom:18px;
+
+border:1px solid #DDD;
+
+border-radius:12px;
+
+font-size:15px;
+
+outline:none;
+
+transition:.3s;
+
+}
+
+.clothing-form input:focus,
+.clothing-form select:focus,
+.clothing-form textarea:focus{
+
+border-color:#F28C28;
+
+box-shadow:0 0 8px rgba(242,140,40,.3);
+
+}
+
+.clothing-form textarea{
+
+resize:vertical;
+
+min-height:120px;
+
+}
+
+.action-buttons{
+
+display:flex;
+
+gap:15px;
+
+flex-wrap:wrap;
+
+}
+
+.action-buttons button{
+
+flex:1;
+
+}
+
+
+/* ======================================
+   Search Bar
+====================================== */
+
+.wardrobe-tools{
+
+display:flex;
+
+gap:15px;
+
+padding:20px;
+
+flex-wrap:wrap;
+
+}
+
+.wardrobe-tools input{
+
+flex:1;
+
+padding:14px;
+
+border-radius:12px;
+
+border:1px solid #DDD;
+
+}
+
+.wardrobe-tools select{
+
+padding:14px;
+
+border-radius:12px;
+
+border:1px solid #DDD;
+
+}
+
+
+/* ======================================
+   Empty Wardrobe
+====================================== */
+
+.empty-card{
+
+background:white;
+
+padding:50px;
+
+text-align:center;
+
+border-radius:25px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.empty-card h2{
+
+font-size:70px;
+
+margin-bottom:15px;
+
+}
+
+.empty-card h3{
+
+color:#123A73;
+
+margin-bottom:10px;
+
+}
+
+
+/* ======================================
+   Footer
+====================================== */
+
+footer{
+
+margin-top:50px;
+
+padding:35px;
+
+background:#123A73;
+
+color:white;
+
+text-align:center;
+
+}
+
+footer h3{
+
+margin-bottom:10px;
+
+color:#D4AF37;
+
+}
+
+
+/* ======================================
+   Mobile
+====================================== */
+
+@media(max-width:900px){
+
+.upload-container{
+
+grid-template-columns:1fr;
+
+}
+
+.action-buttons{
+
+flex-direction:column;
+
 }
 
 }
